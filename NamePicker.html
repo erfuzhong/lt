@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随机点名机</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(to bottom right, #9333ea, #3b82f6, #4f46e5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Arial', sans-serif;
+            padding: 16px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            padding: 32px;
+            width: 100%;
+            max-width: 480px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 16px;
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            color: #6b7280;
+            margin-bottom: 40px;
+        }
+        
+        .name-display {
+            height: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+        
+        .name {
+            font-size: 5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #9333ea, #3b82f6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            min-height: 6rem;
+            line-height: 1.2;
+            letter-spacing: 2px;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 24px 32px;
+            border-radius: 16px;
+            font-size: 1.75rem;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            transform: scale(1);
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-start {
+            background: linear-gradient(to right, #9333ea, #3b82f6);
+            color: white;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-start:hover {
+            background: linear-gradient(to right, #7e22ce, #2563eb);
+            transform: scale(1.05);
+        }
+        
+        .btn-start:active {
+            transform: scale(0.95);
+        }
+        
+        .btn-stop {
+            background: #ef4444;
+            color: white;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-stop:hover {
+            background: #dc2626;
+            transform: scale(1.05);
+        }
+        
+        .btn-stop:active {
+            transform: scale(0.95);
+        }
+        
+        .result {
+            margin-top: 32px;
+            padding: 24px;
+            background: #f0fdf4;
+            border-radius: 16px;
+            border: 2px solid #bbf7d0;
+        }
+        
+        .result-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #16a34a;
+        }
+        
+        .footer {
+            margin-top: 32px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.25rem;
+            font-weight: 500;
+        }
+        
+        @media (min-width: 768px) {
+            h1 {
+                font-size: 3.75rem;
+            }
+            
+            .name {
+                font-size: 6rem;
+            }
+            
+            .btn {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>随机点名机</h1>
+        <p class="subtitle">高二（1）班 · 58位同学</p>
+        
+        <div class="name-display">
+            <div id="name" class="name">点击开始</div>
+        </div>
+        
+        <button id="actionBtn" class="btn btn-start">开始</button>
+        
+        <div id="result" class="result" style="display: none;"></div>
+    </div>
+    
+    <div class="footer">Made by Conqueror_L</div>
+
+    <script>
+        const allStudents = [
+            "肖俊宇", "申弈涵", "寇乐乐", "潘云飞", "陈若宣", "薛天齐", "王平泉", "邹辰昱", "杭义浩", "陈诗涵",
+            "翟晨昊", "万浩宇", "陈婧舒", "王欣妍", "马嘉伟", "卢婧婧", "刘宇橙", "陈宇浩", "葛宇航", "孔维扬",
+            "杨珂权", "华伟琦", "周嘉磊", "何名浩", "陈优璇", "陈忆慧", "李霞康", "翟政炜", "卞苏晨", "潘闰宇",
+            "方振兴", "李家宇", "潘佳琦", "张丹晨", "严翰知", "陈奥", "程煜扬", "李思业", "李子钰", "钱涅困",
+            "刘明镪", "李奕彤", "陈思月", "孙嘉辰", "俞晓宇", "王致远", "曹心晨", "丁子迁", "邓承希", "周嘉鑫",
+            "黄周逸凡", "曹梓杨", "戴逸瑄", "李俊熙", "夏思宇", "黄稼明", "钱浩泽", "钱泽一"
+        ];
+
+        const selectableStudents = [
+            "肖俊宇", "申弈涵", "寇乐乐", "潘云飞", "陈若宣", "薛天齐", "王平泉", "杭义浩", "陈诗涵",
+            "翟晨昊", "万浩宇", "陈婧舒", "王欣妍", "卢婧婧", "刘宇橙", "陈宇浩", "华伟琦", "周嘉磊",
+            "何名浩", "陈优璇", "陈忆慧", "李霞康", "卞苏晨", "潘闰宇", "方振兴", "潘佳琦", "张丹晨", "严翰知",
+            "陈奥", "程煜扬", "李思业", "钱涅困", "刘明镪", "李奕彤", "陈思月", "孙嘉辰", "俞晓宇", "王致远",
+            "曹心晨", "丁子迁", "邓承希", "周嘉鑫", "黄周逸凡", "曹梓杨", "戴逸瑄", "李俊熙", "夏思宇", "黄稼明",
+            "钱浩泽", "钱泽一"
+        ];
+
+        const guaranteedNames = ["马嘉伟", "翟政炜"];
+        let guaranteedCounter = 0;
+        let isRunning = false;
+        let intervalId = null;
+        let drawCount = 0; // 抽取次数计数器
+        let guaranteedUsed = false; // 保底是否已使用
+
+        const nameElement = document.getElementById('name');
+        const actionBtn = document.getElementById('actionBtn');
+        const resultElement = document.getElementById('result');
+
+        function startRolling() {
+            if (isRunning) {
+                stopRolling();
+                return;
+            }
+
+            isRunning = true;
+            resultElement.style.display = 'none';
+
+            if (intervalId) {
+                clearInterval(intervalId);
+            }
+
+            // 滚动间隔改为80ms
+            intervalId = setInterval(() => {
+                const randomIndex = Math.floor(Math.random() * allStudents.length);
+                nameElement.textContent = allStudents[randomIndex];
+            }, 80);
+
+            actionBtn.textContent = '停！';
+            actionBtn.className = 'btn btn-stop';
+        }
+
+        function stopRolling() {
+            if (intervalId) {
+                clearInterval(intervalId);
+            }
+            isRunning = false;
+
+            let result;
+            drawCount++;
+
+            // 前两次不出现保底名单
+            if (drawCount <= 2) {
+                const randomIndex = Math.floor(Math.random() * selectableStudents.length);
+                result = selectableStudents[randomIndex];
+            } 
+            // 第三次及以后，如果保底还未使用，则8次内必中一次保底
+            else if (!guaranteedUsed) {
+                const rollCount = Math.floor(Math.random() * 8) + 1;
+                
+                if (rollCount === 1 || guaranteedCounter >= 8) {
+                    const index = Math.floor(Math.random() * guaranteedNames.length);
+                    result = guaranteedNames[index];
+                    guaranteedCounter = 0;
+                    guaranteedUsed = true; // 标记保底已使用
+                } else {
+                    const randomIndex = Math.floor(Math.random() * selectableStudents.length);
+                    result = selectableStudents[randomIndex];
+                    guaranteedCounter++;
+                }
+            } 
+            // 保底已使用，只从可选名单中抽取
+            else {
+                const randomIndex = Math.floor(Math.random() * selectableStudents.length);
+                result = selectableStudents[randomIndex];
+            }
+
+            nameElement.textContent = result;
+            resultElement.innerHTML = `<p class="result-text">🎉 查 ${result} 同学被选中！</p>`;
+            resultElement.style.display = 'block';
+            actionBtn.textContent = '开始';
+            actionBtn.className = 'btn btn-start';
+        }
+
+        actionBtn.addEventListener('click', startRolling);
+    </script>
+</body>
+</html>
