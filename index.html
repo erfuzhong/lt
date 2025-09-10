@@ -345,6 +345,15 @@
             }
 
             nameElement.textContent = result;
+            
+            // 确保按钮状态正确更新
+            actionBtn.textContent = '开始';
+            actionBtn.className = 'btn btn-start';
+            
+            // 显示结果通知
+            resultElement.innerHTML = `<p class="result-text">🎉 查 ${result} 同学被选中！</p>`;
+            resultElement.style.display = 'block';
+            
             return result;
         }
 
