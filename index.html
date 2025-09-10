@@ -13,11 +13,12 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start; /* 修改为从顶部开始 */
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             padding: 8px;
             box-sizing: border-box;
             -webkit-font-smoothing: antialiased;
+            padding-top: 40px; /* 只减小上边距 */
         }
         
         .container {
@@ -158,14 +159,6 @@
             gap: 10px;
         }
         
-        .footer {
-            margin: 24px 0 14px 0;
-            color: rgba(100, 116, 139, 0.85);
-            font-size: 1.05rem;
-            font-weight: 400;
-            letter-spacing: -0.01em;
-        }
-        
         @media (min-width: 768px) {
             h1 {
                 font-size: 2.8rem;
@@ -229,8 +222,6 @@
         
         <div id="result" class="result" style="display: none;"></div>
     </div>
-    
-    <div class="footer">Made by Conqueror_L</div>
 
     <script>
         const allStudents = [
