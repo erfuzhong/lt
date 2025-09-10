@@ -13,12 +13,13 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start; /* 修改为从顶部开始 */
+            justify-content: flex-start;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             padding: 8px;
             box-sizing: border-box;
             -webkit-font-smoothing: antialiased;
-            padding-top: 40px; /* 只减小上边距 */
+            padding-top: 40px;
+            position: relative;
         }
         
         .container {
@@ -159,6 +160,32 @@
             gap: 10px;
         }
         
+        .auto-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            border-radius: 20px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+        
+        .auto-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.5);
+        }
+        
+        .auto-btn:active {
+            transform: scale(0.98);
+        }
+        
         @media (min-width: 768px) {
             h1 {
                 font-size: 2.8rem;
@@ -195,9 +222,16 @@
                 margin: 0 6px;
                 border-radius: 28px;
             }
+            
+            .auto-btn {
+                bottom: 16px;
+                right: 16px;
+                padding: 14px 20px;
+                font-size: 1.1rem;
+                border-radius: 18px;
+            }
         }
         
-        /* 添加淡雅的动画效果 */
         @keyframes gentlePulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.015); }
@@ -223,6 +257,8 @@
         <div id="result" class="result" style="display: none;"></div>
     </div>
 
+    <button id="autoBtn" class="auto-btn">自动2连抽</button>
+
     <script>
         const allStudents = [
             "肖俊宇", "申弈涵", "寇乐乐", "潘云飞", "陈若宣", "薛天齐", "王平泉", "邹辰昱", "杭义浩", "陈诗涵",
@@ -246,12 +282,13 @@
         let guaranteedCounter = 0;
         let isRunning = false;
         let intervalId = null;
-        let drawCount = 0; // 抽取次数计数器
-        let guaranteedUsed = false; // 保底是否已使用
+        let drawCount = 0;
+        let guaranteedUsed = false;
 
         const nameElement = document.getElementById('name');
         const actionBtn = document.getElementById('actionBtn');
         const resultElement = document.getElementById('result');
+        const autoBtn = document.getElementById('autoBtn');
 
         function startRolling() {
             if (isRunning) {
@@ -266,7 +303,6 @@
                 clearInterval(intervalId);
             }
 
-            // 滚动间隔改为80ms
             intervalId = setInterval(() => {
                 const randomIndex = Math.floor(Math.random() * allStudents.length);
                 nameElement.textContent = allStudents[randomIndex];
@@ -285,12 +321,10 @@
             let result;
             drawCount++;
 
-            // 前两次不出现保底名单
             if (drawCount <= 2) {
                 const randomIndex = Math.floor(Math.random() * selectableStudents.length);
                 result = selectableStudents[randomIndex];
             } 
-            // 第三次及以后，如果保底还未使用，则8次内必中一次保底
             else if (!guaranteedUsed) {
                 const rollCount = Math.floor(Math.random() * 8) + 1;
                 
@@ -298,27 +332,51 @@
                     const index = Math.floor(Math.random() * guaranteedNames.length);
                     result = guaranteedNames[index];
                     guaranteedCounter = 0;
-                    guaranteedUsed = true; // 标记保底已使用
+                    guaranteedUsed = true;
                 } else {
                     const randomIndex = Math.floor(Math.random() * selectableStudents.length);
                     result = selectableStudents[randomIndex];
                     guaranteedCounter++;
                 }
             } 
-            // 保底已使用，只从可选名单中抽取
             else {
                 const randomIndex = Math.floor(Math.random() * selectableStudents.length);
                 result = selectableStudents[randomIndex];
             }
 
             nameElement.textContent = result;
-            resultElement.innerHTML = `<p class="result-text">🎉 查 ${result} 同学被选中！</p>`;
-            resultElement.style.display = 'block';
-            actionBtn.textContent = '开始';
-            actionBtn.className = 'btn btn-start';
+            return result;
+        }
+
+        function autoDraw() {
+            if (isRunning) return;
+            
+            // 第一次抽取
+            startRolling();
+            
+            // 3秒后停止第一次抽取
+            setTimeout(() => {
+                const firstResult = stopRolling();
+                
+                // 停留2秒
+                setTimeout(() => {
+                    // 开始第二次抽取
+                    startRolling();
+                    
+                    // 再3秒后停止第二次抽取
+                    setTimeout(() => {
+                        const secondResult = stopRolling();
+                        
+                        // 显示最终结果
+                        resultElement.innerHTML = `<p class="result-text">🎉 查 ${firstResult} ${secondResult} 同学被选中！</p>`;
+                        resultElement.style.display = 'block';
+                    }, 3000);
+                }, 2000);
+            }, 3000);
         }
 
         actionBtn.addEventListener('click', startRolling);
+        autoBtn.addEventListener('click', autoDraw);
     </script>
 </body>
 </html>
