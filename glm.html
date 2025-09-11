@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随机点名机</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1:after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            bottom: -10px;
+            left: 20%;
+            border-radius: 2px;
+        }
+        
+        .name-display {
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px 0;
+            background-color: #f8f9fa;
+            border-radius: 15px;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .name-text {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+            transition: all 0.2s ease;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .rolling {
+            animation: roll 0.1s infinite;
+        }
+        
+        @keyframes roll {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+        
+        .control-btn {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            outline: none;
+        }
+        
+        .control-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        .control-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .control-btn.stop {
+            background: linear-gradient(90deg, #f093fb, #f5576c);
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+        }
+        
+        .control-btn.stop:hover {
+            box-shadow: 0 6px 20px rgba(245, 87, 108, 0.6);
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+        
+        .result.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .result h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+        
+        .result-name {
+            font-size: 2.8rem;
+            font-weight: bold;
+            color: #667eea;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f5576c;
+            opacity: 0;
+        }
+        
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .name-text {
+                font-size: 2rem;
+            }
+            
+            .result-name {
+                font-size: 2.2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .name-text {
+                font-size: 1.8rem;
+            }
+            
+            .control-btn {
+                padding: 12px 30px;
+                font-size: 1rem;
+            }
+            
+            .result-name {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>随机点名机</h1>
+        
+        <div class="name-display">
+            <div class="name-text" id="nameDisplay">准备开始</div>
+        </div>
+        
+        <button class="control-btn" id="controlBtn">开始</button>
+        
+        <div class="result" id="result">
+            <h2>恭喜！抽中的人是：</h2>
+            <div class="result-name" id="resultName"></div>
+        </div>
+    </div>
+
+    <script>
+        // 从CSV中提取的名字列表
+        const names = [
+            "肖俊宇", "申弈涵", "寇乐乐", "潘云飞", "陈若宣", "薛天齐", "王平泉", "邹辰昱", 
+            "杭义浩", "陈诗涵", "翟晨昊", "万浩宇", "陈婧舒", "王欣妍", "马嘉伟", "卢婧婧", 
+            "刘宇橙", "陈宇浩", "葛宇航", "孔维扬", "杨珂权", "华伟琦", "周嘉磊", "何名浩", 
+            "陈优璇", "陈忆慧", "李霞康", "翟政炜", "卞苏晨", "潘闰宇", "方振兴", "李家宇", 
+            "潘佳琦", "张丹晨", "严翰知", "陈奥", "程煜扬", "李思业", "李子钰", "钱涅困", 
+            "刘明镪", "李奕彤", "陈思月", "孙嘉辰", "俞晓宇", "王致远", "曹心晨", "丁子迁", 
+            "邓承希", "周嘉鑫", "黄周逸凡", "曹梓杨", "戴逸瑄", "李俊熙", "夏思宇", "黄稼明", 
+            "钱浩泽", "钱泽一"
+        ];
+        
+        const nameDisplay = document.getElementById('nameDisplay');
+        const controlBtn = document.getElementById('controlBtn');
+        const result = document.getElementById('result');
+        const resultName = document.getElementById('resultName');
+        
+        let isRolling = false;
+        let rollInterval;
+        let selectedName;
+        
+        controlBtn.addEventListener('click', function() {
+            if (!isRolling) {
+                startRolling();
+            } else {
+                stopRolling();
+            }
+        });
+        
+        function startRolling() {
+            isRolling = true;
+            controlBtn.textContent = '停！';
+            controlBtn.classList.add('stop');
+            result.classList.remove('show');
+            nameDisplay.classList.add('rolling');
+            
+            // 快速循环显示名字
+            rollInterval = setInterval(() => {
+                const randomIndex = Math.floor(Math.random() * names.length);
+                nameDisplay.textContent = names[randomIndex];
+            }, 50);
+        }
+        
+        function stopRolling() {
+            isRolling = false;
+            clearInterval(rollInterval);
+            
+            // 最终选择一个名字
+            const randomIndex = Math.floor(Math.random() * names.length);
+            selectedName = names[randomIndex];
+            nameDisplay.textContent = selectedName;
+            nameDisplay.classList.remove('rolling');
+            
+            // 显示结果
+            resultName.textContent = selectedName;
+            result.classList.add('show');
+            
+            // 更改按钮状态
+            controlBtn.textContent = '开始';
+            controlBtn.classList.remove('stop');
+            
+            // 创建彩纸效果
+            createConfetti();
+        }
+        
+        function createConfetti() {
+            const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe'];
+            
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.classList.add('confetti');
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.width = Math.random() * 10 + 5 + 'px';
+                    confetti.style.height = confetti.style.width;
+                    confetti.style.opacity = Math.random() * 0.7 + 0.3;
+                    confetti.style.animation = `confetti-fall ${Math.random() * 3 + 2}s linear forwards`;
+                    
+                    document.body.appendChild(confetti);
+                    
+                    // 动画结束后移除元素
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 5000);
+                }, i * 30);
+            }
+        }
+    </script>
+</body>
+</html>
