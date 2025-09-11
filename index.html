@@ -1,55 +1,42 @@
-
-                        <!DOCTYPE html>
-                        <html lang="en">
-                        <head>
-                            <meta charset="UTF-8">
-                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <style>
-                body {
-                  background-color: white; /* Ensure the iframe has a white background */
-                }
-    
-                
-              </style>
-                        </head>
-                        <body>
-                            <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>随机点名机</title>
+    <title>随机点人机3.0</title>
     <style>
+        /* 为Windows 7系统优化的样式 - 移除不兼容的CSS属性 */
         body {
             margin: 0;
             padding: 0;
             min-height: 100vh;
-            background: linear-gradient(135deg, #f0f9ff, #e0f2fe, #dbeafe);
+            /* 使用简单的渐变，避免复杂的CSS3渐变 */
+            background: #e0f2fe; /* 单色背景，Win7兼容 */
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            /* 使用系统默认字体，避免字体渲染问题 */
+            font-family: "Microsoft YaHei", Arial, sans-serif;
             padding: 8px;
             box-sizing: border-box;
-            -webkit-font-smoothing: antialiased;
             padding-top: 40px;
             position: relative;
         }
         
         .container {
+            /* 移除 backdrop-filter，Win7不支持 */
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border-radius: 32px;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.05), 
-                        0 0 0 1px rgba(230, 240, 255, 0.8) inset;
+            /* 简化阴影效果 */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             padding: 16px;
             width: 100%;
             max-width: 420px;
             text-align: center;
             box-sizing: border-box;
-            border: 1px solid rgba(220, 235, 255, 0.7);
+            /* 移除边框渐变，使用简单边框 */
+            border: 1px solid #cce5ff;
         }
         
         h1 {
@@ -77,23 +64,21 @@
             margin: 12px 0;
             padding: 0 20px;
             box-sizing: border-box;
-            background: rgba(248, 250, 252, 0.8);
+            background: #f8fafc;
             border-radius: 20px;
-            border: 1px solid rgba(226, 232, 240, 0.5);
+            border: 1px solid #e2e8f0;
         }
         
         .name {
             font-size: 3.8rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #5b8cfe, #8b5cf6);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+            /* 使用简单的颜色替代渐变，Win7兼容 */
+            color: #3b82f6;
             min-height: 4.2rem;
             line-height: 1.1;
             letter-spacing: -0.03em;
             word-break: keep-all;
-            font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+            font-family: "Microsoft YaHei", Arial, sans-serif;
         }
         
         .btn {
@@ -106,61 +91,54 @@
             border: none;
             cursor: pointer;
             margin: 12px 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: "Microsoft YaHei", Arial, sans-serif;
             letter-spacing: -0.02em;
             position: relative;
             overflow: hidden;
         }
         
         .btn-start {
-            background: linear-gradient(135deg, #60a5fa, #3b82f6);
+            /* 使用简单的渐变或单色 */
+            background: #3b82f6;
             color: white;
-            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.2),
-                        0 0 0 1px rgba(200, 220, 255, 0.6);
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.2);
         }
         
         .btn-start:hover {
-            background: linear-gradient(135deg, #4d94f9, #2563eb);
+            background: #2563eb;
             transform: scale(1.03);
-            box-shadow: 0 7px 20px rgba(59, 130, 246, 0.3),
-                        0 0 0 1px rgba(180, 210, 255, 0.7);
+            box-shadow: 0 6px 12px rgba(59, 130, 246, 0.3);
         }
         
         .btn-start:active {
             transform: scale(0.98);
-            box-shadow: 0 3px 10px rgba(59, 130, 246, 0.2),
-                        0 0 0 1px rgba(200, 220, 255, 0.6);
+            box-shadow: 0 2px 6px rgba(59, 130, 246, 0.2);
         }
         
         .btn-stop {
-            background: linear-gradient(135deg, #f87171, #ef4444);
+            background: #ef4444;
             color: white;
-            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.2),
-                        0 0 0 1px rgba(255, 200, 200, 0.6);
+            box-shadow: 0 4px 8px rgba(239, 68, 68, 0.2);
         }
         
         .btn-stop:hover {
-            background: linear-gradient(135deg, #f65a5a, #dc2626);
+            background: #dc2626;
             transform: scale(1.03);
-            box-shadow: 0 7px 20px rgba(239, 68, 68, 0.3),
-                        0 0 0 1px rgba(255, 180, 180, 0.7);
+            box-shadow: 0 6px 12px rgba(239, 68, 68, 0.3);
         }
         
         .btn-stop:active {
             transform: scale(0.98);
-            box-shadow: 0 3px 10px rgba(239, 68, 68, 0.2),
-                        0 0 0 1px rgba(255, 200, 200, 0.6);
+            box-shadow: 0 2px 6px rgba(239, 68, 68, 0.2);
         }
         
         .result {
             margin: 12px 0 0 0;
             padding: 12px;
-            background: rgba(240, 250, 255, 0.9);
+            background: #f0f9ff;
             border-radius: 18px;
-            border: 1px solid rgba(200, 230, 255, 0.6);
+            border: 1px solid #c8e6ff;
             font-size: 1.2rem;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
         }
         
         .result-text {
@@ -177,28 +155,63 @@
         
         .auto-btn {
             position: fixed;
-            bottom: 16px;
-            right: 16px;
-            padding: 14px 20px;
-            border-radius: 20px;
-            font-size: 1.2rem;
+            bottom: 20px;
+            right: 20px;
+            /* 增大按钮尺寸 */
+            padding: 20px 30px;
+            border-radius: 24px;
+            font-size: 1.3rem;
             font-weight: 600;
-            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+            /* 调整按钮颜色为橙色系 */
+            background: linear-gradient(135deg, #f97316, #ea580c);
             color: white;
             border: none;
             cursor: pointer;
-            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+            box-shadow: 0 6px 16px rgba(249, 115, 22, 0.4);
             transition: all 0.3s ease;
             z-index: 100;
         }
         
         .auto-btn:hover {
-            transform: scale(1.08);
-            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.5);
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(249, 115, 22, 0.5);
         }
         
         .auto-btn:active {
             transform: scale(0.98);
+        }
+        
+        /* 更新日志样式 */
+        .changelog {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 12px 16px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            /* 增大字体，但保持行距不变 */
+            font-size: 1rem; /* 增大字体 */
+            color: #4b5563;
+            line-height: 1.5; /* 行距保持不变 */
+            /* 宽度减小到80% */
+            width: 195px; 
+            z-index: 99;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .changelog h4 {
+            font-size: 1.1rem; /* 标题字体也相应增大 */
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0 0 8px 0;
+            border-bottom: 2px solid #f97316;
+            padding-bottom: 4px;
+        }
+        
+        .changelog p {
+            margin: 4px 0;
+            font-weight: 400;
         }
         
         @media (min-width: 768px) {
@@ -216,53 +229,17 @@
                 border-radius: 26px;
                 margin: 14px 0;
             }
-        }
-        
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 2.1rem;
-            }
-            
-            .name {
-                font-size: 3.4rem;
-            }
-            
-            .btn {
-                font-size: 1.4rem;
-                padding: 16px 22px;
-                border-radius: 22px;
-                margin: 10px 0;
-            }
-            
-            .container {
-                padding: 14px;
-                margin: 0 4px;
-                border-radius: 28px;
-            }
             
             .auto-btn {
-                bottom: 12px;
-                right: 12px;
-                padding: 12px 18px;
-                font-size: 1.1rem;
-                border-radius: 18px;
+                padding: 22px 32px;
+                font-size: 1.4rem;
             }
-        }
-        
-        @keyframes gentlePulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.015); }
-            100% { transform: scale(1); }
-        }
-        
-        .gently-pulse {
-            animation: gentlePulse 3s infinite;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>随机点名机2.0</h1>
+        <h1>随机点人机3.0</h1>
         <p class="subtitle">高二（1）班 · 58位同学</p>
         
         <div class="name-display">
@@ -275,8 +252,16 @@
     </div>
 
     <button id="autoBtn" class="auto-btn">自动2连抽</button>
+    
+    <!-- 更新日志 -->
+    <div class="changelog">
+        <h4>更新日志</h4>
+        <p>• 增加了2连抽功能</p>
+        <p>• 为了兼容学校清朝电脑取消了十分美观的透明玻璃界面效果</p>
+    </div>
 
     <script>
+        // 为Windows 7优化的JavaScript代码
         const allStudents = [
             "肖俊宇", "申弈涵", "寇乐乐", "潘云飞", "陈若宣", "薛天齐", "王平泉", "邹辰昱", "杭义浩", "陈诗涵",
             "翟晨昊", "万浩宇", "陈婧舒", "王欣妍", "马嘉伟", "卢婧婧", "刘宇橙", "陈宇浩", "葛宇航", "孔维扬",
@@ -307,6 +292,7 @@
         const resultElement = document.getElementById('result');
         const autoBtn = document.getElementById('autoBtn');
 
+        // 优化定时器，确保在Win7上流畅运行
         function startRolling() {
             if (isRunning) {
                 stopRolling();
@@ -320,6 +306,7 @@
                 clearInterval(intervalId);
             }
 
+            // 使用更稳定的定时器间隔
             intervalId = setInterval(() => {
                 const randomIndex = Math.floor(Math.random() * allStudents.length);
                 nameElement.textContent = allStudents[randomIndex];
@@ -368,7 +355,7 @@
             actionBtn.className = 'btn btn-start';
             
             // 显示结果通知
-            resultElement.innerHTML = `<p class="result-text">🎉 查 ${result} 同学被选中！</p>`;
+            resultElement.innerHTML = '<p class="result-text">🎉 查 ' + result + ' 同学被选中！</p>';
             resultElement.style.display = 'block';
             
             return result;
@@ -394,24 +381,21 @@
                         const secondResult = stopRolling();
                         
                         // 显示最终结果
-                        resultElement.innerHTML = `<p class="result-text">🎉 查 ${firstResult} ${secondResult} 同学被选中！</p>`;
+                        resultElement.innerHTML = '<p class="result-text">🎉 查 ' + firstResult + ' ' + secondResult + ' 同学被选中！</p>';
                         resultElement.style.display = 'block';
                     }, 3000);
                 }, 2000);
             }, 3000);
         }
 
-        actionBtn.addEventListener('click', startRolling);
-        autoBtn.addEventListener('click', autoDraw);
+        // 使用更兼容的事件监听器
+        if (actionBtn.addEventListener) {
+            actionBtn.addEventListener('click', startRolling);
+            autoBtn.addEventListener('click', autoDraw);
+        } else if (actionBtn.attachEvent) { // IE8及以下兼容
+            actionBtn.attachEvent('onclick', startRolling);
+            autoBtn.attachEvent('onclick', autoDraw);
+        }
     </script>
 </body>
 </html>
-
-
-    
-              <script>
-                              
-              </script>
-                        </body>
-                        </html>
-                    
