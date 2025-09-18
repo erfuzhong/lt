@@ -9,10 +9,6 @@
             box-sizing: border-box;
         }
         
-        html {
-            scroll-behavior: smooth;
-        }
-        
         body {
             margin: 0;
             padding: 0;
@@ -30,9 +26,7 @@
         }
         
         .container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.98); /* 移除了 backdrop-filter 以兼容旧版浏览器 */
             border-radius: 24px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 
                         0 2px 8px rgba(0, 0, 0, 0.05);
@@ -266,6 +260,10 @@
             font-size: 1.3rem;
             box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
             animation: resultFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            /* --- 修复开始 --- */
+            position: relative; /* 创建新的堆叠上下文 */
+            z-index: 2;         /* 确保结果通知在按钮阴影之上 */
+            /* --- 修复结束 --- */
         }
         
         @keyframes resultFadeIn {
@@ -337,9 +335,7 @@
             position: fixed;
             bottom: 30px;
             left: 30px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 1); /* 移除了 backdrop-filter 以兼容旧版浏览器 */
             border-radius: 16px;
             padding: 14px 18px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
@@ -348,7 +344,7 @@
             line-height: 1.4;
             width: 220px;
             z-index: 99;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(229, 229, 229, 0.8);
             animation: slideInLeft 1s cubic-bezier(0.16, 1, 0.3, 1) 1s both;
         }
         
@@ -510,12 +506,12 @@
         ];
 
         const selectableStudents = [
-            "肖俊宇", "申弈涵", "寇乐乐", "潘云飞", "陈若宣", "薛天齐", "王平泉", "杭义浩", "陈诗涵",
+            "肖俊宇", "申弈涵", "寇乐乐", "潘云飞", "薛天齐", "王平泉", "杭义浩", "陈诗涵",
             "翟晨昊", "万浩宇", "陈婧舒", "王欣妍", "卢婧婧", "刘宇橙", "陈宇浩", "华伟琦", "周嘉磊",
             "何名浩", "陈优璇", "陈忆慧", "李霞康", "卞苏晨", "潘闰宇", "方振兴", "潘佳琦", "张丹晨", "严翰知",
             "陈奥", "程煜扬", "李思业", "李子钰", "钱涅困", "刘明镪", "李奕彤", "陈思月", "孙嘉辰", "俞晓宇",
             "曹心晨", "丁子迁", "邓承希", "周嘉鑫", "黄周逸凡", "曹梓杨", "戴逸瑄", "李俊熙", "夏思宇",
-            "钱浩泽", "钱泽一"
+            "钱浩泽", "钱泽一", "杨珂权" /* <-- 杨珂权已添加 */
         ];
 
         const guaranteedNames = ["马嘉伟", "翟政炜"];
@@ -736,3 +732,4 @@
     </script>
 </body>
 </html>
+
