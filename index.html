@@ -9,6 +9,10 @@
             box-sizing: border-box;
         }
         
+        html {
+            scroll-behavior: smooth;
+        }
+        
         body {
             margin: 0;
             padding: 0;
@@ -509,7 +513,7 @@
             "肖俊宇", "申弈涵", "寇乐乐", "潘云飞", "陈若宣", "薛天齐", "王平泉", "杭义浩", "陈诗涵",
             "翟晨昊", "万浩宇", "陈婧舒", "王欣妍", "卢婧婧", "刘宇橙", "陈宇浩", "华伟琦", "周嘉磊",
             "何名浩", "陈优璇", "陈忆慧", "李霞康", "卞苏晨", "潘闰宇", "方振兴", "潘佳琦", "张丹晨", "严翰知",
-            "陈奥", "程煜扬", "李思业", "李子钰", "钱涅困", "刘明镪", "李奕彤", "陈思月", "孙嘉辰", "俞晓宇", "王致远",
+            "陈奥", "程煜扬", "李思业", "李子钰", "钱涅困", "刘明镪", "李奕彤", "陈思月", "孙嘉辰", "俞晓宇",
             "曹心晨", "丁子迁", "邓承希", "周嘉鑫", "黄周逸凡", "曹梓杨", "戴逸瑄", "李俊熙", "夏思宇",
             "钱浩泽", "钱泽一"
         ];
@@ -533,6 +537,16 @@
         const autoBtn = document.getElementById('autoBtn');
         const singleDisplay = document.getElementById('singleDisplay');
         const dualDisplay = document.getElementById('dualDisplay');
+
+        // 确保页面从顶部开始
+        window.addEventListener('load', function() {
+            window.scrollTo(0, 0);
+        });
+
+        // 防止页面刷新时保持滚动位置
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
 
         function switchToSingleMode() {
             isDualMode = false;
