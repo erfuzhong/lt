@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>自动点名机4.0</title>
+    <title>自动点名机5.0</title>
     <style>
         * {
             box-sizing: border-box;
@@ -13,7 +13,8 @@
             margin: 0;
             padding: 0;
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            /* 浅色粉蓝渐变背景 */
+            background: linear-gradient(135deg, #e8f4fd 0%, #f0e6ff 50%, #fce4ec 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -28,13 +29,13 @@
         .container {
             background: rgba(255, 255, 255, 0.98);
             border-radius: 24px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 
-                        0 2px 8px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 
+                        0 2px 8px rgba(0, 0, 0, 0.04);
             padding: 20px 24px;
             width: 100%;
             max-width: 420px;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             transform: translateY(0);
             animation: slideInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
@@ -53,7 +54,8 @@
         h1 {
             font-size: 2.7rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            /* 粉蓝色渐变文字 */
+            background: linear-gradient(135deg, #5eb3f5, #8e7cc3, #f06292);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -90,11 +92,11 @@
             justify-content: center;
             margin: 16px 0;
             padding: 0 20px;
-            /* 修复Windows7兼容性：使用实体颜色背景而非渐变 */
-            background: #f1f5f9;
+            /* 浅粉蓝色背景，Windows7兼容 */
+            background: #f3f8ff;
             border-radius: 20px;
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(94, 179, 245, 0.2);
+            box-shadow: inset 0 2px 4px rgba(94, 179, 245, 0.08);
             animation: fadeInScale 1s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
             position: relative;
             overflow: hidden;
@@ -118,11 +120,11 @@
             align-items: center;
             justify-content: center;
             padding: 0 15px;
-            /* 修复Windows7兼容性：使用实体颜色背景而非渐变 */
-            background: #f1f5f9;
+            /* 浅粉蓝色背景，Windows7兼容 */
+            background: #f3f8ff;
             border-radius: 20px;
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(94, 179, 245, 0.2);
+            box-shadow: inset 0 2px 4px rgba(94, 179, 245, 0.08);
             position: relative;
             overflow: hidden;
         }
@@ -141,7 +143,8 @@
         .name {
             font-size: 3.8rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            /* 粉蓝色渐变文字 */
+            background: linear-gradient(135deg, #5eb3f5, #8e7cc3, #f06292);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -155,7 +158,8 @@
         .dual-name {
             font-size: 2.8rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            /* 粉蓝色渐变文字 */
+            background: linear-gradient(135deg, #5eb3f5, #8e7cc3, #f06292);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -190,7 +194,7 @@
             letter-spacing: -0.01em;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
         }
         
         .btn::before {
@@ -209,7 +213,8 @@
         }
         
         .btn-start {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            /* 粉蓝色渐变按钮 */
+            background: linear-gradient(135deg, #5eb3f5, #8e7cc3);
             color: white;
         }
         
@@ -230,38 +235,39 @@
         
         .btn-start:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 8px 24px rgba(94, 179, 245, 0.4);
         }
         
         .btn-start:active {
             transform: translateY(0);
-            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 4px 16px rgba(94, 179, 245, 0.3);
         }
         
         .btn-stop {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            /* 粉红色渐变按钮 */
+            background: linear-gradient(135deg, #f06292, #e91e63);
             color: white;
         }
         
         .btn-stop:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(255, 107, 107, 0.4);
+            box-shadow: 0 8px 24px rgba(240, 98, 146, 0.4);
         }
         
         .btn-stop:active {
             transform: translateY(0);
-            box-shadow: 0 4px 16px rgba(255, 107, 107, 0.3);
+            box-shadow: 0 4px 16px rgba(240, 98, 146, 0.3);
         }
         
         .result {
             margin: 12px 0 0 0;
             padding: 14px;
-            /* 修复Windows7兼容性：使用实体颜色背景而非渐变 */
-            background: #f0f9ff;
+            /* 浅粉蓝色背景，Windows7兼容 */
+            background: #f8fbff;
             border-radius: 16px;
-            border: 1px solid rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(94, 179, 245, 0.3);
             font-size: 1.3rem;
-            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
+            box-shadow: 0 2px 8px rgba(94, 179, 245, 0.15);
             animation: resultFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
             z-index: 2;
@@ -281,7 +287,8 @@
         .result-text {
             font-size: 1.35rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            /* 粉蓝色渐变文字 */
+            background: linear-gradient(135deg, #5eb3f5, #8e7cc3, #f06292);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -301,11 +308,12 @@
             border-radius: 50px;
             font-size: 1.2rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #ffd700, #ffb347);
-            color: #8b4513;
+            /* 粉紫色渐变按钮 */
+            background: linear-gradient(135deg, #ce93d8, #f8bbd9);
+            color: #6a1b9a;
             border: none;
             cursor: pointer;
-            box-shadow: 0 8px 24px rgba(255, 215, 0, 0.4);
+            box-shadow: 0 8px 24px rgba(206, 147, 216, 0.4);
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             z-index: 100;
             font-family: "Microsoft YaHei", "Segoe UI", Tahoma, Arial, sans-serif;
@@ -325,7 +333,7 @@
         
         .auto-btn:hover {
             transform: translateY(-4px);
-            box-shadow: 0 12px 32px rgba(255, 215, 0, 0.5);
+            box-shadow: 0 12px 32px rgba(206, 147, 216, 0.5);
         }
         
         .auto-btn:active {
@@ -336,16 +344,16 @@
             position: fixed;
             bottom: 30px;
             left: 30px;
-            background: rgba(255, 255, 255, 1);
+            background: rgba(255, 255, 255, 0.98);
             border-radius: 16px;
             padding: 14px 18px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
             font-size: 1.05rem;
             color: #4b5563;
             line-height: 1.4;
-            width: 220px;
+            width: 242px; /* 220px * 1.1 = 242px */
             z-index: 99;
-            border: 1px solid rgba(229, 229, 229, 0.8);
+            border: 1px solid rgba(206, 147, 216, 0.2);
             animation: slideInLeft 1s cubic-bezier(0.16, 1, 0.3, 1) 1s both;
         }
         
@@ -363,10 +371,10 @@
         .changelog h4 {
             font-size: 1.15rem;
             font-weight: 700;
-            color: #8b4513;
+            color: #6a1b9a;
             margin: 0 0 8px 0;
             padding-bottom: 6px;
-            border-bottom: 2px solid #ffd700;
+            border-bottom: 2px solid #ce93d8;
         }
         
         .changelog p {
@@ -377,6 +385,8 @@
         
         .changelog p:nth-child(2) { --delay: 0.1s; }
         .changelog p:nth-child(3) { --delay: 0.2s; }
+        .changelog p:nth-child(4) { --delay: 0.3s; }
+        .changelog p:nth-child(5) { --delay: 0.4s; }
         
         @keyframes textFadeIn {
             from {
@@ -388,84 +398,11 @@
                 transform: translateX(0);
             }
         }
-        
-        @media (max-width: 768px) {
-            body {
-                padding: 16px;
-                padding-top: 30px;
-            }
-            
-            .container {
-                padding: 18px 20px;
-            }
-            
-            h1 {
-                font-size: 2.4rem;
-                margin: 0 0 3px 0;
-            }
-            
-            .subtitle {
-                margin: 0 0 14px 0;
-            }
-            
-            .name-display, .dual-name-display {
-                height: 110px;
-                margin: 14px 0;
-            }
-            
-            .name {
-                font-size: 3.2rem;
-            }
-            
-            .dual-name {
-                font-size: 2.4rem;
-            }
-            
-            .name-box {
-                padding: 0 10px;
-            }
-            
-            .btn {
-                font-size: 1.3rem;
-                padding: 15px 20px;
-                margin: 10px 0;
-            }
-            
-            .result {
-                margin: 10px 0 0 0;
-                padding: 12px;
-            }
-            
-            .auto-btn {
-                bottom: 20px;
-                right: 20px;
-                padding: 14px 20px;
-                font-size: 1.1rem;
-            }
-            
-            .changelog {
-                bottom: 20px;
-                left: 20px;
-                width: 180px;
-                font-size: 1rem;
-                padding: 12px 16px;
-            }
-            
-            .changelog h4 {
-                font-size: 1.1rem;
-                margin: 0 0 6px 0;
-                padding-bottom: 4px;
-            }
-            
-            .changelog p {
-                margin: 3px 0;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>自动点名机4.0</h1>
+        <h1>自动点名机5.0</h1>
         <p class="subtitle">高二（1）班 · 58位同学</p>
         
         <!-- 单人模式 -->
@@ -492,8 +429,10 @@
     
     <div class="changelog">
         <h4>更新日志</h4>
-        <p>• 2连抽改为同时抽两人</p>
-        <p>• 大幅改进了界面效果</p>
+        <p>• 优化了界面效果</p>
+        <p>• 更换了可爱的粉蓝配色</p>
+        <p>• 更新了随机算法</p>
+        <p>• 修复了错误的人名</p>
     </div>
 
     <script>
@@ -516,15 +455,19 @@
         ];
 
         const guaranteedNames = ["马嘉伟", "翟政炜"];
-        let guaranteedCounter = 0;
+        // 新的保底机制变量
+        let guaranteedStatus = {
+            "马嘉伟": { drawn: false, counter: 0 },
+            "翟政炜": { drawn: false, counter: 0 }
+        };
+        
         let isRunning = false;
         let intervalId = null;
         let intervalId1 = null;
         let intervalId2 = null;
         let drawCount = 0;
-        let guaranteedUsed = false;
         let isDualMode = false;
-        let autoDrawTimeout = null; // 用于管理自动切换的定时器
+        let autoDrawTimeout = null;
 
         const nameElement = document.getElementById('name');
         const name1Element = document.getElementById('name1');
@@ -566,6 +509,28 @@
             if (autoDrawTimeout) clearTimeout(autoDrawTimeout);
         }
 
+        // 检查是否有保底人员需要触发
+        function checkGuaranteed() {
+            // 如果两个保底人员都已经抽过，返回null
+            if (guaranteedStatus["马嘉伟"].drawn && guaranteedStatus["翟政炜"].drawn) {
+                return null;
+            }
+
+            // 检查是否有未抽中的保底人员需要在8次内触发
+            for (let name of guaranteedNames) {
+                if (!guaranteedStatus[name].drawn) {
+                    guaranteedStatus[name].counter++;
+                    // 如果计数器达到8次或随机触发（1/8概率），返回该保底人员
+                    if (guaranteedStatus[name].counter >= 8 || Math.random() < 0.125) {
+                        guaranteedStatus[name].drawn = true;
+                        guaranteedStatus[name].counter = 0;
+                        return name;
+                    }
+                }
+            }
+            return null;
+        }
+
         function startRolling() {
             if (isRunning) {
                 stopRolling();
@@ -597,7 +562,6 @@
 
         function startDualRolling() {
             if (isRunning) {
-                // 如果正在运行，先停止所有运行中的状态
                 clearAllIntervals();
                 isRunning = false;
                 name1Element.classList.remove('rolling');
@@ -632,27 +596,21 @@
             let result;
             drawCount++;
 
+            // 新的保底机制
             if (drawCount <= 2) {
+                // 前两次直接从普通名单中随机选择
                 const randomIndex = Math.floor(Math.random() * selectableStudents.length);
                 result = selectableStudents[randomIndex];
-            } 
-            else if (!guaranteedUsed) {
-                const rollCount = Math.floor(Math.random() * 8) + 1;
-                
-                if (rollCount === 1 || guaranteedCounter >= 8) {
-                    const index = Math.floor(Math.random() * guaranteedNames.length);
-                    result = guaranteedNames[index];
-                    guaranteedCounter = 0;
-                    guaranteedUsed = true;
+            } else {
+                // 第三次及以后检查保底机制
+                const guaranteedResult = checkGuaranteed();
+                if (guaranteedResult) {
+                    result = guaranteedResult;
                 } else {
+                    // 没有保底触发，从普通名单中随机选择
                     const randomIndex = Math.floor(Math.random() * selectableStudents.length);
                     result = selectableStudents[randomIndex];
-                    guaranteedCounter++;
                 }
-            } 
-            else {
-                const randomIndex = Math.floor(Math.random() * selectableStudents.length);
-                result = selectableStudents[randomIndex];
             }
 
             nameElement.textContent = result;
@@ -681,7 +639,7 @@
             // 第一个人
             let randomIndex1 = Math.floor(Math.random() * availableStudents.length);
             results.push(availableStudents[randomIndex1]);
-            availableStudents.splice(randomIndex1, 1); // 移除已选中的人，避免重复
+            availableStudents.splice(randomIndex1, 1);
             
             // 第二个人
             let randomIndex2 = Math.floor(Math.random() * availableStudents.length);
@@ -697,10 +655,8 @@
         }
 
         function autoDraw() {
-            // 清除之前可能存在的定时器
             clearAllIntervals();
             
-            // 如果正在运行，先重置状态
             if (isRunning) {
                 isRunning = false;
                 nameElement.classList.remove('rolling');
@@ -708,17 +664,12 @@
                 name2Element.classList.remove('rolling');
             }
             
-            // 切换到双人模式
             switchToDualMode();
-            
-            // 开始双人滚动
             startDualRolling();
             
-            // 3秒后停止
             autoDrawTimeout = setTimeout(() => {
                 stopDualRolling();
                 
-                // 5秒后切换回单人模式
                 autoDrawTimeout = setTimeout(() => {
                     switchToSingleMode();
                 }, 5000);
