@@ -26,7 +26,7 @@
         }
         
         .container {
-            background: rgba(255, 255, 255, 0.98); /* 移除了 backdrop-filter 以兼容旧版浏览器 */
+            background: rgba(255, 255, 255, 0.98);
             border-radius: 24px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 
                         0 2px 8px rgba(0, 0, 0, 0.05);
@@ -90,7 +90,8 @@
             justify-content: center;
             margin: 16px 0;
             padding: 0 20px;
-            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            /* 修复Windows7兼容性：使用实体颜色背景而非渐变 */
+            background: #f1f5f9;
             border-radius: 20px;
             border: 1px solid rgba(226, 232, 240, 0.8);
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -117,7 +118,8 @@
             align-items: center;
             justify-content: center;
             padding: 0 15px;
-            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            /* 修复Windows7兼容性：使用实体颜色背景而非渐变 */
+            background: #f1f5f9;
             border-radius: 20px;
             border: 1px solid rgba(226, 232, 240, 0.8);
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -254,16 +256,15 @@
         .result {
             margin: 12px 0 0 0;
             padding: 14px;
-            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            /* 修复Windows7兼容性：使用实体颜色背景而非渐变 */
+            background: #f0f9ff;
             border-radius: 16px;
             border: 1px solid rgba(59, 130, 246, 0.2);
             font-size: 1.3rem;
             box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
             animation: resultFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            /* --- 修复开始 --- */
-            position: relative; /* 创建新的堆叠上下文 */
-            z-index: 2;         /* 确保结果通知在按钮阴影之上 */
-            /* --- 修复结束 --- */
+            position: relative;
+            z-index: 2;
         }
         
         @keyframes resultFadeIn {
@@ -335,7 +336,7 @@
             position: fixed;
             bottom: 30px;
             left: 30px;
-            background: rgba(255, 255, 255, 1); /* 移除了 backdrop-filter 以兼容旧版浏览器 */
+            background: rgba(255, 255, 255, 1);
             border-radius: 16px;
             padding: 14px 18px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
@@ -499,8 +500,8 @@
         const allStudents = [
             "肖俊宇", "申弈涵", "寇乐乐", "潘云飞", "陈若宣", "薛天齐", "王平泉", "邹辰昱", "杭义浩", "陈诗涵",
             "翟晨昊", "万浩宇", "陈婧舒", "王欣妍", "马嘉伟", "卢婧婧", "刘宇橙", "陈宇浩", "葛宇航", "孔维扬",
-            "杨珂权", "华伟琦", "周嘉磊", "何名浩", "陈优璇", "陈忆慧", "李霞康", "翟政炜", "卞苏晨", "潘闰宇",
-            "方振兴", "李家宇", "潘佳琦", "张丹晨", "严翰知", "陈奥", "程煜扬", "李思业", "李子钰", "钱涅困",
+            "杨珂权", "华伟琦", "周嘉磊", "何名浩", "陈优璇", "陈忆慧", "李霞康", "翟政炜", "卞苏晨", "潘闫宇",
+            "方振兴", "李家宇", "潘佳琦", "张丹晨", "严翰知", "陈奥", "程煜扬", "李思业", "李子钰", "钱涅囷",
             "刘明镪", "李奕彤", "陈思月", "孙嘉辰", "俞晓宇", "王致远", "曹心晨", "丁子迁", "邓承希", "周嘉鑫",
             "黄周逸凡", "曹梓杨", "戴逸瑄", "李俊熙", "夏思宇", "黄稼明", "钱浩泽", "钱泽一"
         ];
@@ -508,10 +509,10 @@
         const selectableStudents = [
             "肖俊宇", "申弈涵", "寇乐乐", "潘云飞", "薛天齐", "王平泉", "杭义浩", "陈诗涵",
             "翟晨昊", "万浩宇", "陈婧舒", "王欣妍", "卢婧婧", "刘宇橙", "陈宇浩", "华伟琦", "周嘉磊",
-            "何名浩", "陈优璇", "陈忆慧", "李霞康", "卞苏晨", "潘闰宇", "方振兴", "潘佳琦", "张丹晨", "严翰知",
-            "陈奥", "程煜扬", "李思业", "李子钰", "钱涅困", "刘明镪", "李奕彤", "陈思月", "孙嘉辰", "俞晓宇",
+            "何名浩", "陈优璇", "陈忆慧", "李霞康", "卞苏晨", "潘闫宇", "方振兴", "潘佳琦", "张丹晨", "严翰知",
+            "陈奥", "程煜扬", "李思业", "李子钰", "钱涅囷", "刘明镪", "李奕彤", "陈思月", "孙嘉辰", "俞晓宇",
             "曹心晨", "丁子迁", "邓承希", "周嘉鑫", "黄周逸凡", "曹梓杨", "戴逸瑄", "李俊熙", "夏思宇",
-            "钱浩泽", "钱泽一", "杨珂权" /* <-- 杨珂权已添加 */
+            "钱浩泽", "钱泽一", "杨珂权"
         ];
 
         const guaranteedNames = ["马嘉伟", "翟政炜"];
@@ -732,4 +733,3 @@
     </script>
 </body>
 </html>
-
