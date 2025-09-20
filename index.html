@@ -342,6 +342,7 @@
         .changelog p:nth-child(5) { --delay: 0.4s; }
         .changelog p:nth-child(6) { --delay: 0.5s; }
         .changelog p:nth-child(7) { --delay: 0.6s; }
+        .changelog p:nth-child(8) { --delay: 0.7s; }
         @keyframes textFadeIn {
             from {
                 opacity: 0;
@@ -388,6 +389,7 @@
     <button id="autoBtn" class="auto-btn">自动2连抽</button>
     <div class="changelog">
         <h4>更新日志</h4>
+        <p>• 更新了随机算法以保证一个人不会连续抽到两次</p>
         <p>• 增加了抽中彩带动画</p>
         <p>• 加快了名字滚动速度</p>
         <p>• 更换了绿绿的配色</p>
@@ -426,6 +428,8 @@
         let drawCount = 0;
         let isDualMode = false;
         let autoDrawTimeout = null;
+        // 新增：记录上一次抽中的名字，用于防连续抽中
+        let lastDrawnName = null;
         const nameElement = document.getElementById('name');
         const name1Element = document.getElementById('name1');
         const name2Element = document.getElementById('name2');
@@ -590,8 +594,10 @@
             // 新的保底机制
             if (drawCount <= 2) {
                 // 前两次直接从普通名单中随机选择
-                const randomIndex = Math.floor(Math.random() * selectableStudents.length);
-                result = selectableStudents[randomIndex];
+                do {
+                    const randomIndex = Math.floor(Math.random() * selectableStudents.length);
+                    result = selectableStudents[randomIndex];
+                } while (result === lastDrawnName); // 确保不与上一次相同
             } else {
                 // 第三次及以后检查保底机制
                 const guaranteedResult = checkGuaranteed();
@@ -599,10 +605,14 @@
                     result = guaranteedResult;
                 } else {
                     // 没有保底触发，从普通名单中随机选择
-                    const randomIndex = Math.floor(Math.random() * selectableStudents.length);
-                    result = selectableStudents[randomIndex];
+                    do {
+                        const randomIndex = Math.floor(Math.random() * selectableStudents.length);
+                        result = selectableStudents[randomIndex];
+                    } while (result === lastDrawnName); // 确保不与上一次相同
                 }
             }
+            // 更新记录
+            lastDrawnName = result;
             nameElement.textContent = result;
             actionBtn.textContent = '开始';
             actionBtn.className = 'btn btn-start';
@@ -622,12 +632,17 @@
             const results = [];
             const availableStudents = [...selectableStudents];
             // 第一个人
-            let randomIndex1 = Math.floor(Math.random() * availableStudents.length);
+            let randomIndex1;
+            do {
+                randomIndex1 = Math.floor(Math.random() * availableStudents.length);
+            } while (availableStudents[randomIndex1] === lastDrawnName);
             results.push(availableStudents[randomIndex1]);
             availableStudents.splice(randomIndex1, 1);
             // 第二个人
             let randomIndex2 = Math.floor(Math.random() * availableStudents.length);
             results.push(availableStudents[randomIndex2]);
+            // 更新记录（以第二个人为准，或您可以选择以第一个人为准）
+            lastDrawnName = results[1]; // 这里设定为第二个人，您也可以改为 results[0]
             name1Element.textContent = results[0];
             name2Element.textContent = results[1];
             resultElement.innerHTML = '<p class="result-text">🎉 查 ' + results[0] + ' ' + results[1] + ' 同学被选中！</p>';
