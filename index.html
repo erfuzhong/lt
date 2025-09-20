@@ -547,10 +547,11 @@
                 if (intervalId) {
                     clearInterval(intervalId);
                 }
+                // 速度加快 1.25 倍：80 / 1.25 = 64
                 intervalId = setInterval(() => {
                     const randomIndex = Math.floor(Math.random() * allStudents.length);
                     nameElement.textContent = allStudents[randomIndex];
-                }, 80);
+                }, 64); // 修改此处
                 actionBtn.textContent = '停！';
                 actionBtn.className = 'btn btn-stop';
             }
@@ -567,14 +568,15 @@
             resultElement.style.display = 'none';
             name1Element.classList.add('rolling');
             name2Element.classList.add('rolling');
+            // 速度加快 1.25 倍：80 / 1.25 = 64
             intervalId1 = setInterval(() => {
                 const randomIndex = Math.floor(Math.random() * allStudents.length);
                 name1Element.textContent = allStudents[randomIndex];
-            }, 80);
+            }, 64); // 修改此处
             intervalId2 = setInterval(() => {
                 const randomIndex = Math.floor(Math.random() * allStudents.length);
                 name2Element.textContent = allStudents[randomIndex];
-            }, 80);
+            }, 64); // 修改此处
         }
         function stopRolling() {
             if (intervalId) {
