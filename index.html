@@ -424,7 +424,8 @@
         .lucky-item {
             margin: 0; /* 移除 margin，由 gap 控制间距 */
             padding: 4px 6px;
-            background: #e3f2fd;
+            /* 修改：背景色与主名字框一致 */
+            background: #bbdefb;
             border-radius: 8px;
             font-weight: 500;
             color: #1976d2;
@@ -637,11 +638,11 @@
                 if (intervalId) {
                     clearInterval(intervalId);
                 }
-                // 速度加快 1.25 倍：80 / 1.25 = 64
+                // 修改：滚动间隔改为 50ms
                 intervalId = setInterval(() => {
                     const randomIndex = Math.floor(Math.random() * allStudents.length);
                     nameElement.textContent = allStudents[randomIndex];
-                }, 64);
+                }, 50);
                 actionBtn.textContent = '停！';
                 actionBtn.className = 'btn btn-stop';
             }
@@ -659,15 +660,15 @@
             resultElement.style.display = 'none';
             name1Element.classList.add('rolling');
             name2Element.classList.add('rolling');
-            // 速度加快 1.25 倍：80 / 1.25 = 64
+            // 修改：滚动间隔改为 50ms
             intervalId1 = setInterval(() => {
                 const randomIndex = Math.floor(Math.random() * allStudents.length);
                 name1Element.textContent = allStudents[randomIndex];
-            }, 64);
+            }, 50);
             intervalId2 = setInterval(() => {
                 const randomIndex = Math.floor(Math.random() * allStudents.length);
                 name2Element.textContent = allStudents[randomIndex];
-            }, 64);
+            }, 50);
         }
 
         // 新增：更新今日幸运儿列表的函数
