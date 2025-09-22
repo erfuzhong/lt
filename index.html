@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>点名机 V7.1</title>
+    <title>点名机 V7.5</title>
     <style>
         * {
             box-sizing: border-box;
@@ -367,7 +367,7 @@
             display: none;
         }
 
-        /* 新增：今日幸运儿组件样式 */
+        /* 新增：本次幸运儿组件样式 */
         .lucky-container {
             position: fixed;
             top: 40px; /* 修改：统一边距为40px */
@@ -448,11 +448,48 @@
                 transform: translateX(0);
             }
         }
+
+        /* 新增：今日幸运星座组件样式 */
+        .zodiac-container {
+            position: fixed;
+            top: 40px; /* 统一边距 */
+            left: 40px; /* 定位在左上角 */
+            background: rgba(255, 255, 255, 0.98);
+            width: 250px; /* 与其它组件统一宽度 */
+            border-radius: 16px;
+            padding: 14px 18px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            font-size: 1.05rem;
+            color: #546e7a;
+            line-height: 1.4;
+            z-index: 99;
+            border: 1px solid rgba(100, 181, 246, 0.2);
+            animation: slideInLeft 1s cubic-bezier(0.16, 1, 0.3, 1) 1s both;
+        }
+        .zodiac-container h4 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #0d47a1;
+            margin: 0 0 8px 0;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #64b5f6;
+            text-align: left;
+        }
+        .zodiac-content {
+            text-align: center;
+            font-weight: 700;
+            color: #1976d2;
+            font-size: 1.15rem;
+            padding: 8px 0;
+            background: #bbdefb;
+            border-radius: 8px;
+            animation: luckyFadeIn 0.5s ease-out;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>点名机 V7.1</h1>
+        <h1>点名机 V7.5</h1>
         <p class="subtitle">高二（1）班 · 57位同学</p>
         <!-- 单人模式 -->
         <div id="singleDisplay" class="name-display">
@@ -475,16 +512,25 @@
         <h4>更新日志</h4>
         <p>• 优化随机算法以防止多次抽到同一同学</p>
         <p>• 修复部分同学可能概率不正常的问题</p>
+        <p>• 增加幸运星座组件</p>
         <p>• 增加统计组件</p>
         <p>• 优化彩带动画</p>
         <p>• 更换蓝色配色</p>
     </div>
 
-    <!-- 新增：今日幸运儿组件 -->
+    <!-- 新增：本次幸运儿组件 -->
     <div class="lucky-container">
-        <h4>今日幸运儿</h4>
+        <h4>本次幸运儿</h4>
         <div id="luckyList" class="lucky-list">
             <!-- 抽中的名字将动态添加到这里 -->
+        </div>
+    </div>
+
+    <!-- 新增：今日幸运星座组件 -->
+    <div class="zodiac-container">
+        <h4>今日幸运星座</h4>
+        <div id="zodiacContent" class="zodiac-content">
+            加载中...
         </div>
     </div>
 
@@ -510,7 +556,7 @@
             "钱浩泽", "钱泽一", "马嘉伟", "翟政炜", "孔维扬", "葛宇航", "陈若宣"
         ];
 
-        // 新增：用于记录今日幸运儿的数组
+        // 新增：用于记录本次幸运儿的数组
         let luckyStudents = [];
 
         let isRunning = false;
@@ -532,16 +578,39 @@
         const singleDisplay = document.getElementById('singleDisplay');
         const dualDisplay = document.getElementById('dualDisplay');
 
-        // 新增：获取今日幸运儿列表的 DOM 元素
+        // 新增：获取本次幸运儿列表的 DOM 元素
         const luckyListElement = document.getElementById('luckyList');
+        // 新增：获取今日幸运星座内容的 DOM 元素
+        const zodiacContentElement = document.getElementById('zodiacContent');
 
         // 确保页面从顶部开始
         window.addEventListener('load', function() {
             window.scrollTo(0, 0);
+            // 调用API获取今日幸运星座
+            fetchTodayLuckyZodiac();
         });
         // 防止页面刷新时保持滚动位置
         if ('scrollRestoration' in history) {
             history.scrollRestoration = 'manual';
+        }
+
+        // 新增：通过API获取今日幸运星座
+        async function fetchTodayLuckyZodiac() {
+            try {
+                // 根据API文档，我们请求白羊座（aries）的今日（today）运势
+                const response = await fetch('https://v2.xxapi.cn/api/horoscope?type=aries&time=today');
+                const data = await response.json();
+                
+                if (data.code === 200 && data.data && data.data.title) {
+                    // API返回的title字段是中文星座名，如“白羊座”
+                    zodiacContentElement.textContent = data.data.title;
+                } else {
+                    zodiacContentElement.textContent = "白羊座";
+                }
+            } catch (error) {
+                console.error("获取星座数据失败:", error);
+                zodiacContentElement.textContent = "白羊座";
+            }
         }
 
         function switchToSingleMode() {
@@ -672,7 +741,7 @@
             }, 50);
         }
 
-        // 新增：更新今日幸运儿列表的函数
+        // 新增：更新本次幸运儿列表的函数
         function updateLuckyList(name) {
             // 创建一个新的列表项
             const listItem = document.createElement('div');
@@ -710,7 +779,7 @@
             result = selectableStudents[randomIndex];
             // 从候选名单中移除该学生
             selectableStudents.splice(randomIndex, 1);
-            // 记录到今日幸运儿
+            // 记录到本次幸运儿
             luckyStudents.push(result);
             // 更新 DOM
             updateLuckyList(result);
@@ -761,7 +830,7 @@
             results.push(selectableStudents[randomIndex2]);
             selectableStudents.splice(randomIndex2, 1);
 
-            // 记录到今日幸运儿
+            // 记录到本次幸运儿
             luckyStudents.push(...results);
             // 更新 DOM
             updateLuckyList(results[1]); // 先添加第二个
