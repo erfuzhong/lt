@@ -291,12 +291,13 @@
                 transform: translateY(0);
             }
         }
+        /* 修复：二连抽按钮悬停动画 */
         .auto-btn:hover {
-            transform: translateY(-4px);
+            transform: translateY(-4px); /* 悬停时上移4px */
             box-shadow: 0 12px 32px rgba(100, 181, 246, 0.5);
         }
         .auto-btn:active {
-            transform: translateY(-2px);
+            transform: translateY(-2px); /* 点击时比悬停状态“下沉”2px，更符合物理直觉 */
         }
         .changelog {
             position: fixed;
@@ -367,7 +368,7 @@
             display: none;
         }
 
-        /* 新增：本次幸运儿组件样式 */
+        /* 新增：今日幸运儿组件样式 */
         .lucky-container {
             position: fixed;
             top: 40px; /* 修改：统一边距为40px */
@@ -410,7 +411,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr; /* 两列，等宽 */
             gap: 4px; /* 列间距和行间距 */
-            max-height: 200px;
+            max-height: 200px; /* 保持最大高度不变 */
             overflow-y: auto;
             padding-right: 4px; /* 为滚动条留空间 */
         }
@@ -426,6 +427,7 @@
             padding: 4px 6px;
             /* 修改：背景色与主名字框一致 */
             background: #bbdefb;
+            /* 圆角大小为 8px */
             border-radius: 8px;
             /* 修改：字体粗细与大名字框一致 */
             font-weight: 700;
@@ -447,6 +449,31 @@
                 opacity: 1;
                 transform: translateX(0);
             }
+        }
+
+        /* 修改：删除按钮样式（与二连抽按钮配色一致，圆角与名字框一致） */
+        .clear-btn {
+            width: 100%;
+            padding: 8px 12px;
+            margin-top: 10px;
+            /* 修改：圆角大小与名字记录框一致 */
+            border-radius: 8px;
+            font-size: 1.05rem; /* 修改：字体大小 */
+            font-weight: 700;
+            /* 修改：配色与二连抽按钮完全一致 */
+            background: linear-gradient(135deg, #64b5f6, #42a5f5);
+            color: #0d47a1;
+            border: none; /* 与二连抽按钮一致，无边框 */
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(100, 181, 246, 0.4); /* 与二连抽按钮阴影一致 */
+        }
+        .clear-btn:hover {
+            transform: translateY(-2px); /* 与二连抽按钮悬停效果一致 */
+            box-shadow: 0 4px 8px rgba(100, 181, 246, 0.5); /* 与二连抽按钮悬停阴影一致 */
+        }
+        .clear-btn:active {
+            transform: translateY(0);
         }
 
         /* 新增：今日幸运星座组件样式 */
@@ -518,19 +545,21 @@
         <p>• 更换蓝色配色</p>
     </div>
 
-    <!-- 新增：本次幸运儿组件 -->
+    <!-- 新增：今日幸运儿组件 -->
     <div class="lucky-container">
-        <h4>本次幸运儿</h4>
+        <h4>今日幸运儿</h4>
         <div id="luckyList" class="lucky-list">
             <!-- 抽中的名字将动态添加到这里 -->
         </div>
+        <!-- 新增：删除全部记录按钮 -->
+        <button id="clearLuckyBtn" class="clear-btn">删除全部记录</button>
     </div>
 
     <!-- 新增：今日幸运星座组件 -->
     <div class="zodiac-container">
         <h4>今日幸运星座</h4>
         <div id="zodiacContent" class="zodiac-content">
-            加载中...
+            <!-- 星座内容将由JavaScript动态填充 -->
         </div>
     </div>
 
@@ -556,7 +585,7 @@
             "钱浩泽", "钱泽一", "马嘉伟", "翟政炜", "孔维扬", "葛宇航", "陈若宣"
         ];
 
-        // 新增：用于记录本次幸运儿的数组
+        // 新增：用于记录今日幸运儿的数组
         let luckyStudents = [];
 
         let isRunning = false;
@@ -566,8 +595,6 @@
         let drawCount = 0;
         let isDualMode = false;
         let autoDrawTimeout = null;
-        // 移除：不再需要记录上一次抽中的名字，因为抽中后会移出名单
-        // let lastDrawnName = null;
 
         const nameElement = document.getElementById('name');
         const name1Element = document.getElementById('name1');
@@ -578,39 +605,140 @@
         const singleDisplay = document.getElementById('singleDisplay');
         const dualDisplay = document.getElementById('dualDisplay');
 
-        // 新增：获取本次幸运儿列表的 DOM 元素
+        // 新增：获取今日幸运儿列表的 DOM 元素
         const luckyListElement = document.getElementById('luckyList');
+        // 新增：获取删除按钮
+        const clearLuckyBtn = document.getElementById('clearLuckyBtn');
         // 新增：获取今日幸运星座内容的 DOM 元素
         const zodiacContentElement = document.getElementById('zodiacContent');
+
+        // 定义星座列表（按顺序）
+        const zodiacSigns = [
+            "白羊座", "金牛座", "双子座", "巨蟹座", "狮子座", "处女座",
+            "天秤座", "天蝎座", "射手座", "摩羯座", "水瓶座", "双鱼座"
+        ];
+
+        // ================= 核心功能：根据日期计算固定星座 =================
+        function getZodiacByDate() {
+            const today = new Date();
+            const dayOfMonth = today.getDate(); // 获取当前是几号 (1-31)
+            // 使用模运算将1-31映射到0-11，实现循环分配
+            const index = (dayOfMonth - 1) % zodiacSigns.length;
+            return zodiacSigns[index];
+        }
+
+        // ================= 核心功能：从localStorage加载或初始化今日幸运儿名单 =================
+        function loadOrInitLuckyStudents() {
+            const today = new Date().toDateString(); // 获取今天的日期字符串，如 "Mon Jun 10 2024"
+            let storedData = null;
+
+            // 防止因浏览器不支持localStorage而报错
+            try {
+                storedData = localStorage.getItem('luckyStudentsData');
+            } catch (e) {
+                console.warn('localStorage is not supported or disabled.');
+                // 即使不支持，也初始化为空数组
+                luckyStudents = [];
+                renderLuckyList();
+                return;
+            }
+
+            if (storedData) {
+                try {
+                    const parsedData = JSON.parse(storedData);
+                    // 检查是否是今天的数据
+                    if (parsedData.date === today) {
+                        luckyStudents = parsedData.students || [];
+                        // 重新渲染DOM
+                        renderLuckyList();
+                        return;
+                    }
+                } catch (e) {
+                    console.warn('Failed to parse stored lucky students data.');
+                }
+            }
+            // 如果没有数据或是旧数据，则初始化为空数组
+            luckyStudents = [];
+            saveLuckyStudentsToStorage(); // 保存初始状态
+        }
+
+        // 保存幸运儿名单到localStorage
+        function saveLuckyStudentsToStorage() {
+            const today = new Date().toDateString();
+            const dataToSave = {
+                date: today,
+                students: luckyStudents
+            };
+
+            // 防止因浏览器不支持localStorage而报错
+            try {
+                localStorage.setItem('luckyStudentsData', JSON.stringify(dataToSave));
+            } catch (e) {
+                console.warn('Failed to save data to localStorage:', e);
+                // 即使保存失败，也不影响当前功能
+            }
+        }
+
+        // 渲染幸运儿列表到DOM
+        function renderLuckyList() {
+            luckyListElement.innerHTML = ''; // 清空现有内容
+            // 从后往前渲染，保证最新抽中的在最前面（与添加顺序一致）
+            for (let i = luckyStudents.length - 1; i >= 0; i--) {
+                const listItem = document.createElement('div');
+                listItem.className = 'lucky-item';
+                listItem.textContent = luckyStudents[i];
+                luckyListElement.appendChild(listItem);
+            }
+        }
+
+        // 更新今日幸运儿列表的函数（修改版：包含持久化存储）
+        function updateLuckyList(name) {
+            // 创建一个新的列表项
+            const listItem = document.createElement('div');
+            listItem.className = 'lucky-item';
+            listItem.textContent = name;
+            // 将新项添加到列表顶部（DOM操作）
+            luckyListElement.prepend(listItem);
+
+            // 记录到数组
+            luckyStudents.push(name);
+            // 保存到localStorage
+            saveLuckyStudentsToStorage();
+        }
+
+        // 修改：清空今日幸运儿记录（无弹窗）
+        function clearLuckyRecords() {
+            // 直接清空，无确认和提示
+            luckyStudents = [];
+            luckyListElement.innerHTML = '';
+            saveLuckyStudentsToStorage();
+            // 重置候选名单
+            selectableStudents = [
+                "肖俊宇", "申弈涵", "寇乐乐", "潘云飞", "薛天齐", "杭义浩", "陈诗涵",
+                "翟晨昊", "万浩宇", "陈婧舒", "王欣妍", "卢婧婧", "刘宇橙", "陈宇浩", "华伟琦", "周嘉磊",
+                "何名浩", "陈优璇", "陈忆慧", "李霞康", "卞苏晨", "潘闫宇", "方振兴", "潘佳琦", "张丹晨", "严翰知",
+                "陈奥", "程煜扬", "李思业", "李子钰", "钱涅囷", "刘明镪", "李奕彤", "陈思月", "俞晓宇",
+                "曹心晨", "丁子迁", "邓承希", "周嘉鑫", "黄周逸凡", "曹梓杨", "戴逸瑄", "李俊熙", "夏思宇",
+                "钱浩泽", "钱泽一", "马嘉伟", "翟政炜", "孔维扬", "葛宇航", "陈若宣"
+            ];
+            // 无 alert 提示
+        }
+
+        // 为删除按钮绑定事件
+        clearLuckyBtn.addEventListener('click', clearLuckyRecords);
 
         // 确保页面从顶部开始
         window.addEventListener('load', function() {
             window.scrollTo(0, 0);
-            // 调用API获取今日幸运星座
-            fetchTodayLuckyZodiac();
+            // 初始化幸运星座（基于日期，固定不变）
+            zodiacContentElement.textContent = getZodiacByDate();
+            // 加载或初始化幸运儿名单
+            loadOrInitLuckyStudents();
         });
+
         // 防止页面刷新时保持滚动位置
         if ('scrollRestoration' in history) {
             history.scrollRestoration = 'manual';
-        }
-
-        // 新增：通过API获取今日幸运星座
-        async function fetchTodayLuckyZodiac() {
-            try {
-                // 根据API文档，我们请求白羊座（aries）的今日（today）运势
-                const response = await fetch('https://v2.xxapi.cn/api/horoscope?type=aries&time=today');
-                const data = await response.json();
-                
-                if (data.code === 200 && data.data && data.data.title) {
-                    // API返回的title字段是中文星座名，如“白羊座”
-                    zodiacContentElement.textContent = data.data.title;
-                } else {
-                    zodiacContentElement.textContent = "白羊座";
-                }
-            } catch (error) {
-                console.error("获取星座数据失败:", error);
-                zodiacContentElement.textContent = "白羊座";
-            }
         }
 
         function switchToSingleMode() {
@@ -741,16 +869,6 @@
             }, 50);
         }
 
-        // 新增：更新本次幸运儿列表的函数
-        function updateLuckyList(name) {
-            // 创建一个新的列表项
-            const listItem = document.createElement('div');
-            listItem.className = 'lucky-item';
-            listItem.textContent = name;
-            // 将新项添加到列表顶部
-            luckyListElement.prepend(listItem);
-        }
-
         function stopRolling() {
             if (intervalId) {
                 clearInterval(intervalId);
@@ -773,15 +891,14 @@
                 ];
                 luckyStudents = []; // 清空幸运儿列表
                 luckyListElement.innerHTML = ''; // 清空 DOM
+                saveLuckyStudentsToStorage(); // 保存清空后的状态
             }
 
             const randomIndex = Math.floor(Math.random() * selectableStudents.length);
             result = selectableStudents[randomIndex];
             // 从候选名单中移除该学生
             selectableStudents.splice(randomIndex, 1);
-            // 记录到本次幸运儿
-            luckyStudents.push(result);
-            // 更新 DOM
+            // 更新 DOM 和存储
             updateLuckyList(result);
 
             nameElement.textContent = result;
@@ -818,6 +935,7 @@
                 ];
                 luckyStudents = []; // 清空幸运儿列表
                 luckyListElement.innerHTML = ''; // 清空 DOM
+                saveLuckyStudentsToStorage(); // 保存清空后的状态
             }
 
             // 第一个人
@@ -830,9 +948,7 @@
             results.push(selectableStudents[randomIndex2]);
             selectableStudents.splice(randomIndex2, 1);
 
-            // 记录到本次幸运儿
-            luckyStudents.push(...results);
-            // 更新 DOM
+            // 更新 DOM 和存储
             updateLuckyList(results[1]); // 先添加第二个
             updateLuckyList(results[0]); // 再添加第一个，使其在列表顶部
 
