@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>点名机 V7.0</title>
+    <title>点名机 V7.1</title>
     <style>
         * {
             box-sizing: border-box;
@@ -261,8 +261,8 @@
         }
         .auto-btn {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
+            bottom: 40px; /* 修改：统一边距为40px */
+            right: 40px; /* 修改：统一边距为40px */
             /* 修改：加宽按钮宽度为250px */
             width: 250px;
             padding: 16px 24px;
@@ -300,8 +300,8 @@
         }
         .changelog {
             position: fixed;
-            bottom: 30px;
-            left: 30px;
+            bottom: 40px; /* 修改：统一边距为40px */
+            left: 40px; /* 修改：统一边距为40px */
             background: rgba(255, 255, 255, 0.98);
             /* 修改：加宽更新日志宽度为250px */
             width: 250px;
@@ -370,8 +370,8 @@
         /* 新增：今日幸运儿组件样式 */
         .lucky-container {
             position: fixed;
-            top: 30px;
-            right: 30px;
+            top: 40px; /* 修改：统一边距为40px */
+            right: 40px; /* 修改：统一边距为40px */
             background: rgba(255, 255, 255, 0.98);
             /* 修改：加宽幸运儿组件宽度为250px */
             width: 250px;
@@ -427,7 +427,8 @@
             /* 修改：背景色与主名字框一致 */
             background: #bbdefb;
             border-radius: 8px;
-            font-weight: 500;
+            /* 修改：字体粗细与大名字框一致 */
+            font-weight: 700;
             color: #1976d2;
             /* 修改：增大字体到 1.15rem */
             font-size: 1.15rem;
@@ -451,8 +452,8 @@
 </head>
 <body>
     <div class="container">
-        <h1>点名机 V7.0</h1>
-        <p class="subtitle">高二（1）班 · 58位同学</p>
+        <h1>点名机 V7.1</h1>
+        <p class="subtitle">高二（1）班 · 57位同学</p>
         <!-- 单人模式 -->
         <div id="singleDisplay" class="name-display">
             <div id="name" class="name">点击开始</div>
@@ -564,7 +565,7 @@
             if (autoDrawTimeout) clearTimeout(autoDrawTimeout);
         }
 
-        // ================= 彩带动画函数（恢复150粒子，部分蓝色系部分彩色） =================
+        // ================= 彩带动画函数（粒子数量改为100） =================
         let isConfettiPlaying = false; // 标志位，防止动画重叠播放
         function launchConfetti() {
             // 如果动画正在播放，则不再触发
@@ -577,8 +578,8 @@
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             canvas.style.display = 'block';
-            // 将粒子数量恢复为 150
-            const confettiCount = 150;
+            // 修改：将粒子数量改为 100
+            const confettiCount = 100;
             // 使用蓝色系颜色 + 彩色系颜色
             const blueColors = ['#2196f3', '#64b5f6', '#bbdefb', '#1976d2', '#0d47a1', '#e3f2fd', '#42a5f5'];
             const colorfulColors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#54a0ff', '#5f27cd'];
