@@ -367,7 +367,6 @@
             z-index: 200; /* 提升层级，显示在所有元素之上 */
             display: none;
         }
-
         /* 新增：今日幸运儿组件样式 */
         .lucky-container {
             position: fixed;
@@ -450,7 +449,6 @@
                 transform: translateX(0);
             }
         }
-
         /* 修改：删除按钮样式（与二连抽按钮配色一致，圆角与名字框一致） */
         .clear-btn {
             width: 100%;
@@ -475,7 +473,6 @@
         .clear-btn:active {
             transform: translateY(0);
         }
-
         /* 新增：今日幸运星座组件样式 */
         .zodiac-container {
             position: fixed;
@@ -544,7 +541,6 @@
         <p>• 优化彩带动画</p>
         <p>• 更换蓝色配色</p>
     </div>
-
     <!-- 新增：今日幸运儿组件 -->
     <div class="lucky-container">
         <h4>今日幸运儿</h4>
@@ -554,7 +550,6 @@
         <!-- 新增：删除全部记录按钮 -->
         <button id="clearLuckyBtn" class="clear-btn">删除全部记录</button>
     </div>
-
     <!-- 新增：今日幸运星座组件 -->
     <div class="zodiac-container">
         <h4>今日幸运星座</h4>
@@ -562,7 +557,6 @@
             <!-- 星座内容将由JavaScript动态填充 -->
         </div>
     </div>
-
     <!-- 彩带动画 Canvas -->
     <canvas id="confetti-canvas"></canvas>
     <script>
@@ -574,20 +568,12 @@
             "刘明镪", "李奕彤", "陈思月", "俞晓宇", "王致远", "曹心晨", "丁子迁", "邓承希", "周嘉鑫",
             "黄周逸凡", "曹梓杨", "戴逸瑄", "李俊熙", "夏思宇", "黄稼明", "钱浩泽", "钱泽一"
         ];
-        // 修改：将杨珂权移出 selectableStudents，使其不会被抽到
-        // 修改：将孔维扬、葛宇航和陈若宣移入 selectableStudents，使其概率正常
-        let selectableStudents = [
-            "肖俊宇", "申弈涵", "寇乐乐", "潘云飞", "薛天齐", "杭义浩", "陈诗涵",
-            "翟晨昊", "万浩宇", "陈婧舒", "王欣妍", "卢婧婧", "刘宇橙", "陈宇浩", "华伟琦", "周嘉磊",
-            "何名浩", "陈优璇", "陈忆慧", "李霞康", "卞苏晨", "潘闫宇", "方振兴", "潘佳琦", "张丹晨", "严翰知",
-            "陈奥", "程煜扬", "李思业", "李子钰", "钱涅囷", "刘明镪", "李奕彤", "陈思月", "俞晓宇",
-            "曹心晨", "丁子迁", "邓承希", "周嘉鑫", "黄周逸凡", "曹梓杨", "戴逸瑄", "李俊熙", "夏思宇",
-            "钱浩泽", "钱泽一", "马嘉伟", "翟政炜", "孔维扬", "葛宇航", "陈若宣"
-        ];
-
+        // 新增：定义“幽灵学生”名单，只在滚动时出现
+        const ghostStudents = ["杨珂权", "邹辰昱", "王致远", "黄稼明"];
+        // 修改：创建一个用于实际抽取的名单，排除“幽灵学生”
+        let selectableStudents = allStudents.filter(student => !ghostStudents.includes(student));
         // 新增：用于记录今日幸运儿的数组
         let luckyStudents = [];
-
         let isRunning = false;
         let intervalId = null;
         let intervalId1 = null;
@@ -595,7 +581,6 @@
         let drawCount = 0;
         let isDualMode = false;
         let autoDrawTimeout = null;
-
         const nameElement = document.getElementById('name');
         const name1Element = document.getElementById('name1');
         const name2Element = document.getElementById('name2');
@@ -604,20 +589,17 @@
         const autoBtn = document.getElementById('autoBtn');
         const singleDisplay = document.getElementById('singleDisplay');
         const dualDisplay = document.getElementById('dualDisplay');
-
         // 新增：获取今日幸运儿列表的 DOM 元素
         const luckyListElement = document.getElementById('luckyList');
         // 新增：获取删除按钮
         const clearLuckyBtn = document.getElementById('clearLuckyBtn');
         // 新增：获取今日幸运星座内容的 DOM 元素
         const zodiacContentElement = document.getElementById('zodiacContent');
-
         // 定义星座列表（按顺序）
         const zodiacSigns = [
             "白羊座", "金牛座", "双子座", "巨蟹座", "狮子座", "处女座",
             "天秤座", "天蝎座", "射手座", "摩羯座", "水瓶座", "双鱼座"
         ];
-
         // ================= 核心功能：根据日期计算固定星座 =================
         function getZodiacByDate() {
             const today = new Date();
@@ -626,12 +608,10 @@
             const index = (dayOfMonth - 1) % zodiacSigns.length;
             return zodiacSigns[index];
         }
-
         // ================= 核心功能：从localStorage加载或初始化今日幸运儿名单 =================
         function loadOrInitLuckyStudents() {
             const today = new Date().toDateString(); // 获取今天的日期字符串，如 "Mon Jun 10 2024"
             let storedData = null;
-
             // 防止因浏览器不支持localStorage而报错
             try {
                 storedData = localStorage.getItem('luckyStudentsData');
@@ -642,7 +622,6 @@
                 renderLuckyList();
                 return;
             }
-
             if (storedData) {
                 try {
                     const parsedData = JSON.parse(storedData);
@@ -661,7 +640,6 @@
             luckyStudents = [];
             saveLuckyStudentsToStorage(); // 保存初始状态
         }
-
         // 保存幸运儿名单到localStorage
         function saveLuckyStudentsToStorage() {
             const today = new Date().toDateString();
@@ -669,7 +647,6 @@
                 date: today,
                 students: luckyStudents
             };
-
             // 防止因浏览器不支持localStorage而报错
             try {
                 localStorage.setItem('luckyStudentsData', JSON.stringify(dataToSave));
@@ -678,7 +655,6 @@
                 // 即使保存失败，也不影响当前功能
             }
         }
-
         // 渲染幸运儿列表到DOM
         function renderLuckyList() {
             luckyListElement.innerHTML = ''; // 清空现有内容
@@ -690,7 +666,6 @@
                 luckyListElement.appendChild(listItem);
             }
         }
-
         // 更新今日幸运儿列表的函数（修改版：包含持久化存储）
         function updateLuckyList(name) {
             // 创建一个新的列表项
@@ -699,13 +674,11 @@
             listItem.textContent = name;
             // 将新项添加到列表顶部（DOM操作）
             luckyListElement.prepend(listItem);
-
             // 记录到数组
             luckyStudents.push(name);
             // 保存到localStorage
             saveLuckyStudentsToStorage();
         }
-
         // 修改：清空今日幸运儿记录（无弹窗）
         function clearLuckyRecords() {
             // 直接清空，无确认和提示
@@ -713,20 +686,11 @@
             luckyListElement.innerHTML = '';
             saveLuckyStudentsToStorage();
             // 重置候选名单
-            selectableStudents = [
-                "肖俊宇", "申弈涵", "寇乐乐", "潘云飞", "薛天齐", "杭义浩", "陈诗涵",
-                "翟晨昊", "万浩宇", "陈婧舒", "王欣妍", "卢婧婧", "刘宇橙", "陈宇浩", "华伟琦", "周嘉磊",
-                "何名浩", "陈优璇", "陈忆慧", "李霞康", "卞苏晨", "潘闫宇", "方振兴", "潘佳琦", "张丹晨", "严翰知",
-                "陈奥", "程煜扬", "李思业", "李子钰", "钱涅囷", "刘明镪", "李奕彤", "陈思月", "俞晓宇",
-                "曹心晨", "丁子迁", "邓承希", "周嘉鑫", "黄周逸凡", "曹梓杨", "戴逸瑄", "李俊熙", "夏思宇",
-                "钱浩泽", "钱泽一", "马嘉伟", "翟政炜", "孔维扬", "葛宇航", "陈若宣"
-            ];
+            selectableStudents = allStudents.filter(student => !ghostStudents.includes(student));
             // 无 alert 提示
         }
-
         // 为删除按钮绑定事件
         clearLuckyBtn.addEventListener('click', clearLuckyRecords);
-
         // 确保页面从顶部开始
         window.addEventListener('load', function() {
             window.scrollTo(0, 0);
@@ -735,33 +699,28 @@
             // 加载或初始化幸运儿名单
             loadOrInitLuckyStudents();
         });
-
         // 防止页面刷新时保持滚动位置
         if ('scrollRestoration' in history) {
             history.scrollRestoration = 'manual';
         }
-
         function switchToSingleMode() {
             isDualMode = false;
             singleDisplay.style.display = 'flex';
             dualDisplay.classList.remove('active');
             actionBtn.style.display = 'block';
         }
-
         function switchToDualMode() {
             isDualMode = true;
             singleDisplay.style.display = 'none';
             dualDisplay.classList.add('active');
             actionBtn.style.display = 'none';
         }
-
         function clearAllIntervals() {
             if (intervalId) clearInterval(intervalId);
             if (intervalId1) clearInterval(intervalId1);
             if (intervalId2) clearInterval(intervalId2);
             if (autoDrawTimeout) clearTimeout(autoDrawTimeout);
         }
-
         // ================= 彩带动画函数（粒子数量改为100） =================
         let isConfettiPlaying = false; // 标志位，防止动画重叠播放
         function launchConfetti() {
@@ -821,7 +780,6 @@
             animate();
         }
         // ================= 动画函数结束 =================
-
         function startRolling() {
             if (isRunning) {
                 stopRolling();
@@ -837,6 +795,7 @@
                     clearInterval(intervalId);
                 }
                 // 修改：滚动间隔改为 50ms
+                // 修改：滚动时从 allStudents (包含幽灵学生) 中随机抽取
                 intervalId = setInterval(() => {
                     const randomIndex = Math.floor(Math.random() * allStudents.length);
                     nameElement.textContent = allStudents[randomIndex];
@@ -845,7 +804,6 @@
                 actionBtn.className = 'btn btn-stop';
             }
         }
-
         function startDualRolling() {
             if (isRunning) {
                 clearAllIntervals();
@@ -859,6 +817,7 @@
             name1Element.classList.add('rolling');
             name2Element.classList.add('rolling');
             // 修改：滚动间隔改为 50ms
+            // 修改：滚动时从 allStudents (包含幽灵学生) 中随机抽取
             intervalId1 = setInterval(() => {
                 const randomIndex = Math.floor(Math.random() * allStudents.length);
                 name1Element.textContent = allStudents[randomIndex];
@@ -868,7 +827,6 @@
                 name2Element.textContent = allStudents[randomIndex];
             }, 50);
         }
-
         function stopRolling() {
             if (intervalId) {
                 clearInterval(intervalId);
@@ -876,31 +834,21 @@
             isRunning = false;
             nameElement.classList.remove('rolling');
             let result;
-
-            // 修改：从 selectableStudents 中随机抽取，并移除该学生
+            // 修改：从 selectableStudents (不包含幽灵学生) 中随机抽取，并移除该学生
             if (selectableStudents.length === 0) {
                 alert("所有同学都已抽过一遍！名单已重置。");
                 // 重置名单
-                selectableStudents = [
-                    "肖俊宇", "申弈涵", "寇乐乐", "潘云飞", "薛天齐", "杭义浩", "陈诗涵",
-                    "翟晨昊", "万浩宇", "陈婧舒", "王欣妍", "卢婧婧", "刘宇橙", "陈宇浩", "华伟琦", "周嘉磊",
-                    "何名浩", "陈优璇", "陈忆慧", "李霞康", "卞苏晨", "潘闫宇", "方振兴", "潘佳琦", "张丹晨", "严翰知",
-                    "陈奥", "程煜扬", "李思业", "李子钰", "钱涅囷", "刘明镪", "李奕彤", "陈思月", "俞晓宇",
-                    "曹心晨", "丁子迁", "邓承希", "周嘉鑫", "黄周逸凡", "曹梓杨", "戴逸瑄", "李俊熙", "夏思宇",
-                    "钱浩泽", "钱泽一", "马嘉伟", "翟政炜", "孔维扬", "葛宇航", "陈若宣"
-                ];
+                selectableStudents = allStudents.filter(student => !ghostStudents.includes(student));
                 luckyStudents = []; // 清空幸运儿列表
                 luckyListElement.innerHTML = ''; // 清空 DOM
                 saveLuckyStudentsToStorage(); // 保存清空后的状态
             }
-
             const randomIndex = Math.floor(Math.random() * selectableStudents.length);
             result = selectableStudents[randomIndex];
             // 从候选名单中移除该学生
             selectableStudents.splice(randomIndex, 1);
             // 更新 DOM 和存储
             updateLuckyList(result);
-
             nameElement.textContent = result;
             actionBtn.textContent = '开始';
             actionBtn.className = 'btn btn-start';
@@ -910,48 +858,34 @@
             launchConfetti();
             return result;
         }
-
         function stopDualRolling() {
             if (intervalId1) clearInterval(intervalId1);
             if (intervalId2) clearInterval(intervalId2);
             isRunning = false;
             name1Element.classList.remove('rolling');
             name2Element.classList.remove('rolling');
-
             // 获取两个随机结果
             const results = [];
-
-            // 修改：从 selectableStudents 中抽取两人，并移除
+            // 修改：从 selectableStudents (不包含幽灵学生) 中抽取两人，并移除
             if (selectableStudents.length < 2) {
                 alert("剩余可选同学不足两人！名单已重置。");
                 // 重置名单
-                selectableStudents = [
-                    "肖俊宇", "申弈涵", "寇乐乐", "潘云飞", "薛天齐", "杭义浩", "陈诗涵",
-                    "翟晨昊", "万浩宇", "陈婧舒", "王欣妍", "卢婧婧", "刘宇橙", "陈宇浩", "华伟琦", "周嘉磊",
-                    "何名浩", "陈优璇", "陈忆慧", "李霞康", "卞苏晨", "潘闫宇", "方振兴", "潘佳琦", "张丹晨", "严翰知",
-                    "陈奥", "程煜扬", "李思业", "李子钰", "钱涅囷", "刘明镪", "李奕彤", "陈思月", "俞晓宇",
-                    "曹心晨", "丁子迁", "邓承希", "周嘉鑫", "黄周逸凡", "曹梓杨", "戴逸瑄", "李俊熙", "夏思宇",
-                    "钱浩泽", "钱泽一", "马嘉伟", "翟政炜", "孔维扬", "葛宇航", "陈若宣"
-                ];
+                selectableStudents = allStudents.filter(student => !ghostStudents.includes(student));
                 luckyStudents = []; // 清空幸运儿列表
                 luckyListElement.innerHTML = ''; // 清空 DOM
                 saveLuckyStudentsToStorage(); // 保存清空后的状态
             }
-
             // 第一个人
             let randomIndex1 = Math.floor(Math.random() * selectableStudents.length);
             results.push(selectableStudents[randomIndex1]);
             selectableStudents.splice(randomIndex1, 1);
-
             // 第二个人
             let randomIndex2 = Math.floor(Math.random() * selectableStudents.length);
             results.push(selectableStudents[randomIndex2]);
             selectableStudents.splice(randomIndex2, 1);
-
             // 更新 DOM 和存储
             updateLuckyList(results[1]); // 先添加第二个
             updateLuckyList(results[0]); // 再添加第一个，使其在列表顶部
-
             name1Element.textContent = results[0];
             name2Element.textContent = results[1];
             resultElement.innerHTML = '<p class="result-text">🎉 查 ' + results[0] + ' ' + results[1] + ' 同学被选中！</p>';
@@ -960,7 +894,6 @@
             launchConfetti();
             return results;
         }
-
         function autoDraw() {
             clearAllIntervals();
             if (isRunning) {
@@ -978,10 +911,8 @@
                 }, 5000);
             }, 3000);
         }
-
         actionBtn.addEventListener('click', startRolling);
         autoBtn.addEventListener('click', autoDraw);
-
         // 初始化为单人模式
         switchToSingleMode();
     </script>
