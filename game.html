@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随机小游戏</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            height: 100vh;
+            overflow: hidden;
+            /* 苹果风渐变背景 - 使用明亮清新的色彩 */
+            background: linear-gradient(135deg, #0071e3 0%, #34aadc 30%, #4cd964 60%, #ffcc00 80%, #ff9500 100%);
+            display: flex;
+            color: #333;
+        }
+        
+        /* 左侧组件 - 40%宽度 */
+        .game-selector {
+            width: 40%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+            position: relative;
+            overflow: hidden;
+            border-right: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .game-selector::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            z-index: 0;
+        }
+        
+        .game-selector > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 40px;
+            color: #1d1d1f;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .game-name {
+            font-size: 1.8rem;
+            font-weight: 600;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 0 20px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            min-width: 300px;
+            word-break: break-all;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .game-name.rolling {
+            /* 苹果风渐变 - 使用系统蓝 */
+            background: linear-gradient(45deg, #0071e3, #0a84ff);
+            color: white;
+            animation: pulse 1s infinite alternate;
+            box-shadow: 0 6px 24px rgba(0, 113, 227, 0.4);
+        }
+        
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.03); }
+        }
+        
+        .btn {
+            padding: 15px 50px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            /* 苹果系统绿色 */
+            background: linear-gradient(45deg, #30d158, #32d74b);
+            color: white;
+            box-shadow: 0 6px 18px rgba(48, 209, 88, 0.4);
+            transition: all 0.3s ease;
+            outline: none;
+            font-weight: 600;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(48, 209, 88, 0.6);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 4px 12px rgba(48, 209, 88, 0.4);
+        }
+        
+        .btn.stop {
+            /* 苹果系统红色 */
+            background: linear-gradient(45deg, #ff453a, #ff3b30);
+            box-shadow: 0 6px 18px rgba(255, 69, 58, 0.4);
+        }
+        
+        .btn.stop:hover {
+            box-shadow: 0 8px 24px rgba(255, 69, 58, 0.6);
+        }
+        
+        /* 右侧组件 - 60%宽度 */
+        .game-attachment {
+            width: 60%;
+            height: 100%;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            overflow: auto;
+            border-left: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .attachment-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 25px;
+            color: #1d1d1f;
+            text-align: center;
+        }
+        
+        .attachment-content {
+            width: 90%;
+            max-width: 800px;
+            background: white;
+            border-radius: 18px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .attachment-text {
+            font-size: 1.8rem; /* 保持1.8rem字体大小 */
+            line-height: 1.8;
+            color: #1d1d1f;
+        }
+        
+        .attachment-video {
+            width: 100%;
+            height: 400px;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+        
+        .attachment-video video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+            color: #86868b;
+        }
+        
+        .placeholder p {
+            font-size: 1.4rem;
+            font-weight: 500;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 900px) {
+            .game-selector {
+                width: 100%;
+                height: 50vh;
+            }
+            
+            .game-attachment {
+                width: 100%;
+                height: 50vh;
+            }
+            
+            .game-name {
+                font-size: 1.4rem;
+                min-width: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 左侧组件 -->
+    <div class="game-selector">
+        <h1 class="title">随机小游戏</h1>
+        <div class="game-name" id="gameName">点击开始按钮抽取游戏</div>
+        <button class="btn" id="startBtn">开始</button>
+    </div>
+    
+    <!-- 右侧组件 -->
+    <div class="game-attachment">
+        <div class="placeholder" id="placeholder">
+            <p>抽取游戏后，这里将显示游戏详情</p>
+        </div>
+        <div class="attachment-content" id="attachmentContent" style="display: none;">
+            <h2 class="attachment-title" id="attachmentTitle">游戏详情</h2>
+            <div id="attachmentInner"></div>
+        </div>
+    </div>
+
+    <script>
+        // 游戏预设数据（30个，其中只有部分有实际内容）
+        const games = [
+            {
+                name: "挑战：单脚站立1分钟",
+                type: "text",
+                content: "规则：单脚站立，保持平衡60秒。可以尝试闭眼增加难度！这个挑战能有效锻炼你的平衡感和核心肌群。"
+            },
+            {
+                name: "跳舞视频：街舞基础",
+                type: "video",
+                content: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+            },
+            {
+                name: "唱歌挑战：高音挑战",
+                type: "text",
+                content: "尝试唱出你最高音！从简单的音阶开始，逐步挑战更高音域。注意保护嗓子，不要过度用力。"
+            },
+            {
+                name: "平衡挑战：头顶书本行走",
+                type: "text",
+                content: "在头顶放一本书，保持平衡走直线10米。这个挑战能锻炼你的专注力和身体协调性。"
+            },
+            {
+                name: "跳舞视频：拉丁舞入门",
+                type: "video",
+                content: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+            },
+            {
+                name: "唱歌挑战：经典老歌接龙",
+                type: "text",
+                content: "随机选择一首经典老歌，尝试唱出副歌部分。可以邀请朋友一起玩接龙游戏！"
+            },
+            {
+                name: "挑战：一分钟平板支撑",
+                type: "text",
+                content: "保持标准平板支撑姿势60秒。注意保持身体成一条直线，不要塌腰或翘臀。"
+            },
+            {
+                name: "跳舞视频：K-pop热舞",
+                type: "video",
+                content: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+            },
+            {
+                name: "唱歌挑战：情歌对唱",
+                type: "text",
+                content: "选择一首经典情歌，尝试和朋友或家人对唱。注意情感表达和音准配合。"
+            },
+            {
+                name: "挑战：闭眼原地转圈10圈",
+                type: "text",
+                content: "闭上眼睛原地转圈10圈后，尝试走直线。这个挑战会考验你的平衡感和方向感！"
+            },
+            // 其他20个预设（只有名称，没有实际内容）
+            { name: "挑战：一分钟跳绳", type: null },
+            { name: "跳舞视频：芭蕾基础", type: null },
+            { name: "唱歌挑战：儿歌串烧", type: null },
+            { name: "挑战：倒立靠墙30秒", type: null },
+            { name: "跳舞视频：现代舞入门", type: null },
+            { name: "唱歌挑战：摇滚金曲", type: null },
+            { name: "挑战：单手俯卧撑5个", type: null },
+            { name: "跳舞视频：爵士舞基础", type: null },
+            { name: "唱歌挑战：民谣弹唱", type: null },
+            { name: "挑战：仰卧起坐30个", type: null },
+            { name: "跳舞视频：机械舞基础", type: null },
+            { name: "唱歌挑战：音乐剧选段", type: null },
+            { name: "挑战：高抬腿1分钟", type: null },
+            { name: "跳舞视频：肚皮舞入门", type: null },
+            { name: "唱歌挑战：合唱练习", type: null },
+            { name: "挑战：侧平板支撑", type: null },
+            { name: "跳舞视频：广场舞教学", type: null },
+            { name: "唱歌挑战：流行歌曲", type: null },
+            { name: "挑战：一分钟深蹲", type: null },
+            { name: "跳舞视频：民族舞入门", type: null }
+        ];
+        
+        // 获取DOM元素
+        const gameNameEl = document.getElementById('gameName');
+        const startBtn = document.getElementById('startBtn');
+        const placeholderEl = document.getElementById('placeholder');
+        const attachmentContentEl = document.getElementById('attachmentContent');
+        const attachmentTitleEl = document.getElementById('attachmentTitle');
+        const attachmentInnerEl = document.getElementById('attachmentInner');
+        
+        // 状态变量
+        let isRolling = false;
+        let rollInterval = null;
+        let availableGames = [];
+        
+        // 初始化：过滤出有实际内容的游戏
+        function initAvailableGames() {
+            availableGames = games.filter(game => game.type !== null);
+        }
+        
+        // 开始/停止滚动
+        function toggleRolling() {
+            if (!isRolling) {
+                // 开始滚动
+                startBtn.textContent = '停';
+                startBtn.classList.add('stop');
+                gameNameEl.classList.add('rolling');
+                isRolling = true;
+                
+                // 隐藏附件内容，显示占位符
+                placeholderEl.style.display = 'flex';
+                attachmentContentEl.style.display = 'none';
+                
+                // 开始滚动效果（80ms延迟）
+                rollInterval = setInterval(() => {
+                    const randomGame = availableGames[Math.floor(Math.random() * availableGames.length)];
+                    gameNameEl.textContent = randomGame.name;
+                }, 80); // 80ms滚动延迟
+            } else {
+                // 停止滚动
+                clearInterval(rollInterval);
+                startBtn.textContent = '开始';
+                startBtn.classList.remove('stop');
+                gameNameEl.classList.remove('rolling');
+                isRolling = false;
+                
+                // 显示选中的游戏附件
+                showAttachment(gameNameEl.textContent);
+            }
+        }
+        
+        // 显示游戏附件
+        function showAttachment(gameName) {
+            const game = availableGames.find(g => g.name === gameName);
+            
+            if (game) {
+                attachmentTitleEl.textContent = game.name;
+                
+                if (game.type === 'text') {
+                    attachmentInnerEl.innerHTML = `<div class="attachment-text">${game.content}</div>`;
+                } else if (game.type === 'video') {
+                    attachmentInnerEl.innerHTML = `
+                        <div class="attachment-video">
+                            <video controls>
+                                <source src="${game.content}" type="video/mp4">
+                                您的浏览器不支持视频播放。
+                            </video>
+                        </div>
+                    `;
+                }
+                
+                placeholderEl.style.display = 'none';
+                attachmentContentEl.style.display = 'block';
+            }
+        }
+        
+        // 初始化
+        initAvailableGames();
+        
+        // 绑定按钮事件
+        startBtn.addEventListener('click', toggleRolling);
+    </script>
+</body>
+</html>
