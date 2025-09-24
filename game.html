@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>随机小游戏</title>
+    <!-- 预加载点名机页面 -->
+    <link rel="prefetch" href="https://lt.sycz.eu.org/loading2.html">
     <style>
         * {
             margin: 0;
@@ -71,10 +73,10 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             padding: 0 20px;
             background: white;
-            border-radius: 16px;
+            border-radius: 16px; /* 圆角大小 */
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             transition: all 0.3s ease;
             min-width: 300px;
@@ -96,11 +98,11 @@
         }
         
         .btn {
-            padding: 15px 50px;
+            padding: 15px 0; /* 移除左右padding，使用width控制宽度 */
             font-size: 1.4rem;
             font-weight: bold;
             border: none;
-            border-radius: 50px;
+            border-radius: 16px; /* 与游戏名框圆角一致 */
             cursor: pointer;
             /* 苹果系统绿色 */
             background: linear-gradient(45deg, #30d158, #32d74b);
@@ -109,6 +111,7 @@
             transition: all 0.3s ease;
             outline: none;
             font-weight: 600;
+            width: 220px; /* 固定宽度 220px */
         }
         
         .btn:hover {
@@ -129,6 +132,27 @@
         
         .btn.stop:hover {
             box-shadow: 0 8px 24px rgba(255, 69, 58, 0.6);
+        }
+        
+        .btn-namer {
+            margin-top: 15px;
+            /* 默认浅绿色 */
+            background: linear-gradient(45deg, #a1e8af, #74d18f);
+            box-shadow: 0 6px 18px rgba(116, 209, 143, 0.4);
+        }
+        
+        .btn-namer:hover {
+            box-shadow: 0 8px 24px rgba(116, 209, 143, 0.6);
+        }
+        
+        .btn-namer.rolling {
+            /* 滚动时浅红色 */
+            background: linear-gradient(45deg, #ffdad6, #ffaba8);
+            box-shadow: 0 6px 18px rgba(255, 171, 168, 0.4);
+        }
+        
+        .btn-namer.rolling:hover {
+            box-shadow: 0 8px 24px rgba(255, 171, 168, 0.6);
         }
         
         /* 右侧组件 - 60%宽度 */
@@ -155,13 +179,17 @@
         }
         
         .attachment-content {
-            width: 90%;
-            max-width: 800px;
+            width: 95%; /* 占右侧区域95% */
+            max-width: 1200px;
+            max-height: 95%; /* 最高占95% */
             background: white;
             border-radius: 18px;
             padding: 25px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(0, 0, 0, 0.05);
+            overflow: auto;
+            display: flex;
+            flex-direction: column;
         }
         
         .attachment-text {
@@ -172,17 +200,21 @@
         
         .attachment-video {
             width: 100%;
-            height: 400px;
+            height: auto;
+            max-height: 60vh; /* 限制最大高度 */
             border-radius: 14px;
             overflow: hidden;
             box-shadow: 0 6px 20px rgba(0,0,0,0.15);
             border: 1px solid rgba(0, 0, 0, 0.08);
+            margin-top: 10px;
+            background: #000;
         }
         
         .attachment-video video {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain; /* 完整显示，不裁剪 */
+            display: block;
         }
         
         .placeholder {
@@ -199,24 +231,6 @@
             font-size: 1.4rem;
             font-weight: 500;
         }
-        
-        /* 响应式设计 */
-        @media (max-width: 900px) {
-            .game-selector {
-                width: 100%;
-                height: 50vh;
-            }
-            
-            .game-attachment {
-                width: 100%;
-                height: 50vh;
-            }
-            
-            .game-name {
-                font-size: 1.4rem;
-                min-width: 250px;
-            }
-        }
     </style>
 </head>
 <body>
@@ -225,6 +239,7 @@
         <h1 class="title">随机小游戏</h1>
         <div class="game-name" id="gameName">点击开始按钮抽取游戏</div>
         <button class="btn" id="startBtn">开始</button>
+        <button class="btn btn-namer" id="namerBtn">打开点名机</button>
     </div>
     
     <!-- 右侧组件 -->
@@ -242,9 +257,9 @@
         // 游戏预设数据（30个，其中只有部分有实际内容）
         const games = [
             {
-                name: "挑战：单脚站立1分钟",
-                type: "text",
-                content: "规则：单脚站立，保持平衡60秒。可以尝试闭眼增加难度！这个挑战能有效锻炼你的平衡感和核心肌群。"
+                name: "唱《说句实话》40秒片段",
+                type: "video",
+                content: "https://lt.sycz.eu.org/说句实话.mp4"
             },
             {
                 name: "跳舞视频：街舞基础",
@@ -317,6 +332,7 @@
         // 获取DOM元素
         const gameNameEl = document.getElementById('gameName');
         const startBtn = document.getElementById('startBtn');
+        const namerBtn = document.getElementById('namerBtn');
         const placeholderEl = document.getElementById('placeholder');
         const attachmentContentEl = document.getElementById('attachmentContent');
         const attachmentTitleEl = document.getElementById('attachmentTitle');
@@ -336,9 +352,10 @@
         function toggleRolling() {
             if (!isRolling) {
                 // 开始滚动
-                startBtn.textContent = '停';
+                startBtn.textContent = '停！';
                 startBtn.classList.add('stop');
                 gameNameEl.classList.add('rolling');
+                namerBtn.classList.add('rolling'); // 同步变浅红色
                 isRolling = true;
                 
                 // 隐藏附件内容，显示占位符
@@ -356,6 +373,7 @@
                 startBtn.textContent = '开始';
                 startBtn.classList.remove('stop');
                 gameNameEl.classList.remove('rolling');
+                namerBtn.classList.remove('rolling'); // 恢复浅绿色
                 isRolling = false;
                 
                 // 显示选中的游戏附件
@@ -384,7 +402,15 @@
                 }
                 
                 placeholderEl.style.display = 'none';
-                attachmentContentEl.style.display = 'block';
+                attachmentContentEl.style.display = 'flex';
+            }
+        }
+        
+        // 跳转到点名机
+        function openNamer() {
+            // 只有在非滚动状态才允许跳转
+            if (!isRolling) {
+                window.location.href = 'https://lt.sycz.eu.org/loading2.html';
             }
         }
         
@@ -393,6 +419,7 @@
         
         // 绑定按钮事件
         startBtn.addEventListener('click', toggleRolling);
+        namerBtn.addEventListener('click', openNamer);
     </script>
 </body>
 </html>
