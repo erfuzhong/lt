@@ -25,8 +25,7 @@
         .game-selector {
             width: 30%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.60); /* 左侧 0.60 */
-            padding: 40px 0;
+            background: rgba(255, 255, 255, 0.60);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -207,12 +206,11 @@
         .game-attachment {
             width: 70%;
             height: 100%;
-            padding: 30px 0 0 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            background: rgba(255, 255, 255, 0.55); /* 右侧 0.55 */
-            overflow: auto;
+            background: rgba(255, 255, 255, 0.55);
+            overflow: hidden;
             border-left: 1px solid rgba(255, 255, 255, 0.3);
         }
         
@@ -226,6 +224,8 @@
             border: 1px solid rgba(0, 0, 0, 0.05);
             margin: auto;
             flex-shrink: 0;
+            max-height: 95%;
+            overflow: auto;
         }
         
         .program-title {
@@ -261,7 +261,7 @@
         .attachment-content {
             width: 95%;
             max-width: 1200px;
-            max-height: 95%;
+            max-height: 95vh; /* 限制整体高度 */
             background: white;
             border-radius: 18px;
             padding: 0;
@@ -296,7 +296,7 @@
         .attachment-video {
             width: 100%;
             height: auto;
-            max-height: 80vh;
+            max-height: 95vh; /* 视频最大高度 95% 视口 */
             border-radius: 14px;
             overflow: hidden;
             box-shadow: 0 6px 20px rgba(0,0,0,0.15);
@@ -307,23 +307,22 @@
         .attachment-video video {
             width: 100%;
             height: auto;
-            min-height: 100%;
-            max-height: 80vh;
-            object-fit: contain;
+            max-height: 95vh;
+            object-fit: contain; /* 保证完整显示 */
             display: block;
         }
         
-        /* 返回主页按钮 */
+        /* 返回主页按钮 - 白底黑字 */
         .back-home-btn {
             position: fixed;
             bottom: 20px;
             right: 20px;
             padding: 12px 24px;
-            font-size: 1.3rem; /* 字体大小 1.3rem */
+            font-size: 1.3rem;
             font-weight: bold;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            border: none;
+            background: white;
+            color: black;
+            border: 1px solid #ccc;
             border-radius: 16px;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -332,8 +331,9 @@
         }
         
         .back-home-btn:hover {
-            background: rgba(0, 0, 0, 0.9);
+            background: #f0f0f0;
             transform: translateY(-2px);
+            border-color: #999;
         }
         
         .placeholder {
@@ -360,7 +360,6 @@
     
     <div class="game-attachment">
         <div class="program-list" id="programList">
-            <!-- 标题已更新 -->
             <h2 class="program-title">节目单 [点击游戏名查看详情]</h2>
             <ul class="program-items" id="programItems"></ul>
         </div>
@@ -378,13 +377,13 @@
             { name: "猪猪喂猪猪\n舞蹈", type: "video", content: "https://lt-25-picture.s3.bitiful.net/ZZ.mp4" },
             { name: "生物\n我爱你", type: "text", content: "深情亲吻生物课本10秒钟，大声说“我爱学习生物”三遍" },
             { name: "超级棒棒糖\n舞蹈", type: "video", content: "https://lt-25-picture.s3.bitiful.net/ZZX.mp4" },
-            { name: "平衡挑战：\n头顶书本行走", type: "text", content: "在头顶放一本书，保持平衡走直线10米。这个挑战能锻炼你的专注力和身体协调性。" },
-            { name: "跳舞视频：\n拉丁舞入门", type: "video", content: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4" },
-            { name: "唱歌挑战：\n经典老歌接龙", type: "text", content: "随机选择一首经典老歌，尝试唱出副歌部分。可以邀请朋友一起玩接龙游戏！" },
-            { name: "挑战：一分钟\n平板支撑", type: "text", content: "保持标准平板支撑姿势60秒。注意保持身体成一条直线，不要塌腰或翘臀。" },
-            { name: "跳舞视频：\nK-pop热舞", type: "video", content: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4" },
-            { name: "唱歌挑战：\n情歌对唱", type: "text", content: "选择一首经典情歌，尝试和朋友或家人对唱。注意情感表达和音准配合。" },
-            { name: "挑战：闭眼原地\n转圈10圈", type: "text", content: "闭上眼睛原地转圈10圈后，尝试走直线。这个挑战会考验你的平衡感和方向感！" },
+            { name: "你好\n讨厌哦", type: "text", content: "选一个同学一边轻捶Ta一边说“你好讨厌哦”" },
+            { name: "唱《说句实话》\n30秒片段", type: "video", content: "https://lt-25-picture.s3.bitiful.net/SJSH.mp4" },
+            { name: "黄桥\n烧饼", type: "text", content: "模仿任一老师上课的样子" },
+            { name: "刀马刀马\n舞蹈", type: "video", content: "https://lt-25-picture.s3.bitiful.net/DM.mp4" },
+            { name: "跳舞视频：\nK-pop热舞", type: null },
+            { name: "请和这样的我恋爱吧\n舞蹈", type: "video", content: "https://lt-25-picture.s3.bitiful.net/LOVE.mp4" },
+            { name: "挑战：闭眼原地\n转圈10圈", type: null },
             { name: "挑战：一分钟跳绳", type: null },
             { name: "跳舞视频：芭蕾基础", type: null },
             { name: "唱歌挑战：儿歌串烧", type: null },
@@ -421,6 +420,7 @@
         let isRolling = false;
         let rollInterval = null;
         let availableGames = [];
+        let currentIndex = 0; // 用于顺序滚动
         
         function initProgramList() {
             programItemsEl.innerHTML = '';
@@ -455,9 +455,11 @@
                     toggleRolling();
                 } else {
                     clearInterval(rollInterval);
+                    currentIndex = 0; // 重置索引
                     rollInterval = setInterval(() => {
-                        const randomGame = currentPool[Math.floor(Math.random() * currentPool.length)];
-                        gameNameEl.innerHTML = randomGame.name.replace(/\n/g, '<br>');
+                        const game = currentPool[currentIndex];
+                        gameNameEl.innerHTML = game.name.replace(/\n/g, '<br>');
+                        currentIndex = (currentIndex + 1) % currentPool.length;
                     }, 80);
                 }
             }
@@ -478,13 +480,14 @@
                 isRolling = true;
                 
                 backHomeBtn.style.display = 'none';
-                
                 attachmentContentEl.style.display = 'none';
                 programListEl.style.display = 'block';
                 
+                currentIndex = 0;
                 rollInterval = setInterval(() => {
-                    const randomGame = currentPool[Math.floor(Math.random() * currentPool.length)];
-                    gameNameEl.innerHTML = randomGame.name.replace(/\n/g, '<br>');
+                    const game = currentPool[currentIndex];
+                    gameNameEl.innerHTML = game.name.replace(/\n/g, '<br>');
+                    currentIndex = (currentIndex + 1) % currentPool.length;
                 }, 80);
             } else {
                 clearInterval(rollInterval);
@@ -494,7 +497,10 @@
                 namerBtn.classList.remove('rolling');
                 isRolling = false;
                 
-                showAttachment(gameNameEl.innerHTML);
+                // 显示当前停止时的游戏
+                const currentPool = getFilteredGames();
+                const stoppedGame = currentPool[(currentIndex - 1 + currentPool.length) % currentPool.length];
+                showGameDetail(stoppedGame);
             }
         }
         
@@ -522,17 +528,6 @@
                         <div class="attachment-text">${game.content}</div>
                     </div>
                 `;
-            }
-        }
-        
-        function showAttachment(displayedHTML) {
-            const displayedText = displayedHTML.replace(/<br\s*\/?>/gi, '\n');
-            const cleanName = displayedText.replace(/\n/g, '');
-            const currentPool = getFilteredGames();
-            const game = currentPool.find(g => g.name.replace(/\n/g, '') === cleanName);
-            
-            if (game) {
-                showGameDetail(game);
             }
         }
         
