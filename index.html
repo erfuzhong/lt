@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>点名机 V7.6</title>
+    <title>点名机 V8.0</title>
+    <!-- 预加载游戏抽奖机页面 -->
+    <link rel="prefetch" href="https://lt.sycz.eu.org/loading.html">
     <style>
         * {
             box-sizing: border-box;
@@ -12,8 +14,7 @@
             margin: 0;
             padding: 0;
             min-height: 100vh;
-            /* 全新的蓝色渐变背景 */
-            background: #e3f2fd; /* 回退色 */
+            background: #e3f2fd;
             background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 50%, #e3f2fd 100%);
             display: flex;
             flex-direction: column;
@@ -51,8 +52,7 @@
         h1 {
             font-size: 2.7rem;
             font-weight: 700;
-            /* 蓝色渐变文字 */
-            color: #1976d2; /* 简化为纯色，更稳重 */
+            color: #1976d2;
             margin: 0 0 4px 0;
             line-height: 1.1;
             letter-spacing: -0.02em;
@@ -83,7 +83,6 @@
             justify-content: center;
             margin: 16px 0;
             padding: 0 20px;
-            /* 稍微加深的蓝色背景 */
             background: #bbdefb;
             border-radius: 20px;
             border: 1px solid rgba(33, 150, 243, 0.3);
@@ -108,7 +107,6 @@
             align-items: center;
             justify-content: center;
             padding: 0 15px;
-            /* 稍微加深的蓝色背景 */
             background: #bbdefb;
             border-radius: 20px;
             border: 1px solid rgba(33, 150, 243, 0.3);
@@ -129,7 +127,6 @@
         .name {
             font-size: 3.8rem;
             font-weight: 700;
-            /* 深蓝色文字 */
             color: #1976d2;
             min-height: 4rem;
             line-height: 1.0;
@@ -140,7 +137,6 @@
         .dual-name {
             font-size: 2.8rem;
             font-weight: 700;
-            /* 深蓝色文字 */
             color: #1976d2;
             min-height: 3rem;
             line-height: 1.0;
@@ -186,7 +182,6 @@
             left: 100%;
         }
         .btn-start {
-            /* 蓝色渐变按钮 */
             background: linear-gradient(135deg, #2196f3, #1976d2);
             color: white;
         }
@@ -212,7 +207,6 @@
             box-shadow: 0 4px 16px rgba(33, 150, 243, 0.3);
         }
         .btn-stop {
-            /* 稍深的蓝色渐变按钮 */
             background: linear-gradient(135deg, #1565c0, #0d47a1);
             color: white;
         }
@@ -227,7 +221,6 @@
         .result {
             margin: 12px 0 0 0;
             padding: 14px;
-            /* 稍微加深的蓝色背景 */
             background: #bbdefb;
             border-radius: 16px;
             border: 1px solid rgba(33, 150, 243, 0.4);
@@ -250,7 +243,6 @@
         .result-text {
             font-size: 1.35rem;
             font-weight: 700;
-            /* 深蓝色文字 */
             color: #1976d2;
             margin: 0;
             line-height: 1.2;
@@ -261,16 +253,13 @@
         }
         .auto-btn {
             position: fixed;
-            bottom: 40px; /* 修改：统一边距为40px */
-            right: 40px; /* 修改：统一边距为40px */
-            /* 修改：加宽按钮宽度为250px */
+            bottom: 40px;
+            right: 40px;
             width: 250px;
             padding: 16px 24px;
-            /* 设置圆角与更新日志一致 */
             border-radius: 16px;
             font-size: 1.2rem;
             font-weight: 700;
-            /* 亮蓝色渐变按钮 */
             background: linear-gradient(135deg, #64b5f6, #42a5f5);
             color: #0d47a1;
             border: none;
@@ -291,20 +280,51 @@
                 transform: translateY(0);
             }
         }
-        /* 修复：二连抽按钮悬停动画 */
         .auto-btn:hover {
-            transform: translateY(-4px); /* 悬停时上移4px */
+            transform: translateY(-4px);
             box-shadow: 0 12px 32px rgba(100, 181, 246, 0.5);
         }
         .auto-btn:active {
-            transform: translateY(-2px); /* 点击时比悬停状态“下沉”2px，更符合物理直觉 */
+            transform: translateY(-2px);
         }
+
+        /* ===== 新增：打开游戏抽奖机按钮 ===== */
+        .game-btn {
+            position: fixed;
+            bottom: 110px; /* 与 auto-btn 保持 10px 间距 */
+            right: 40px;
+            width: 250px;
+            padding: 16px 24px;
+            border-radius: 16px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            /* 低饱和度橙色背景 */
+            background: linear-gradient(135deg, #ffcc80, #ffb74d);
+            /* 深橙色文字 */
+            color: #e65100;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 24px rgba(255, 152, 0, 0.25);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 100;
+            font-family: "Microsoft YaHei", "Segoe UI", Tahoma, Arial, sans-serif;
+            animation: floatIn 1s cubic-bezier(0.16, 1, 0.3, 1) 1.2s both;
+        }
+        .game-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(255, 152, 0, 0.35);
+        }
+        .game-btn:active {
+            transform: translateY(-2px);
+        }
+
         .changelog {
             position: fixed;
-            bottom: 40px; /* 修改：统一边距为40px */
-            left: 40px; /* 修改：统一边距为40px */
+            bottom: 40px;
+            left: 40px;
             background: rgba(255, 255, 255, 0.98);
-            /* 修改：加宽更新日志宽度为250px */
             width: 250px;
             border-radius: 16px;
             padding: 14px 18px;
@@ -337,15 +357,8 @@
         .changelog p {
             margin: 4px 0;
             font-weight: 400;
-            animation: textFadeIn 0.6s ease-out calc(1.4s + var(--delay, 0s)) both;
+            animation: textFadeIn 0.6s ease-out 1.4s both;
         }
-        .changelog p:nth-child(2) { --delay: 0.1s; }
-        .changelog p:nth-child(3) { --delay: 0.2s; }
-        .changelog p:nth-child(4) { --delay: 0.3s; }
-        .changelog p:nth-child(5) { --delay: 0.4s; }
-        .changelog p:nth-child(6) { --delay: 0.5s; }
-        .changelog p:nth-child(7) { --delay: 0.6s; }
-        .changelog p:nth-child(8) { --delay: 0.7s; }
         @keyframes textFadeIn {
             from {
                 opacity: 0;
@@ -356,7 +369,6 @@
                 transform: translateX(0);
             }
         }
-        /* 彩带动画 Canvas 样式 */
         #confetti-canvas {
             position: fixed;
             top: 0;
@@ -364,16 +376,14 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 200; /* 提升层级，显示在所有元素之上 */
+            z-index: 200;
             display: none;
         }
-        /* 新增：今日幸运儿组件样式 */
         .lucky-container {
             position: fixed;
-            top: 40px; /* 修改：统一边距为40px */
-            right: 40px; /* 修改：统一边距为40px */
+            top: 40px;
+            right: 40px;
             background: rgba(255, 255, 255, 0.98);
-            /* 修改：加宽幸运儿组件宽度为250px */
             width: 250px;
             border-radius: 16px;
             padding: 14px 18px;
@@ -402,17 +412,15 @@
             margin: 0 0 8px 0;
             padding-bottom: 6px;
             border-bottom: 2px solid #64b5f6;
-            /* 修改：标题文字左对齐 */
             text-align: left;
         }
         .lucky-list {
-            /* 修改：使用 Grid 布局实现两列显示 */
             display: grid;
-            grid-template-columns: 1fr 1fr; /* 两列，等宽 */
-            gap: 4px; /* 列间距和行间距 */
-            max-height: 200px; /* 保持最大高度不变 */
+            grid-template-columns: 1fr 1fr;
+            gap: 4px;
+            max-height: 200px;
             overflow-y: auto;
-            padding-right: 4px; /* 为滚动条留空间 */
+            padding-right: 4px;
         }
         .lucky-list::-webkit-scrollbar {
             width: 6px;
@@ -422,20 +430,16 @@
             border-radius: 3px;
         }
         .lucky-item {
-            margin: 0; /* 移除 margin，由 gap 控制间距 */
+            margin: 0;
             padding: 4px 6px;
-            /* 修改：背景色与主名字框一致 */
             background: #bbdefb;
-            /* 圆角大小为 8px */
             border-radius: 8px;
-            /* 修改：字体粗细与大名字框一致 */
             font-weight: 700;
             color: #1976d2;
-            /* 修改：增大字体到 1.15rem */
             font-size: 1.15rem;
-            text-align: center; /* 文字居中 */
+            text-align: center;
             animation: luckyFadeIn 0.5s ease-out;
-            white-space: nowrap; /* 防止名字换行 */
+            white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
@@ -449,37 +453,33 @@
                 transform: translateX(0);
             }
         }
-        /* 修改：删除按钮样式（与二连抽按钮配色一致，圆角与名字框一致） */
         .clear-btn {
             width: 100%;
             padding: 8px 12px;
             margin-top: 10px;
-            /* 修改：圆角大小与名字记录框一致 */
             border-radius: 8px;
-            font-size: 1.05rem; /* 修改：字体大小 */
+            font-size: 1.05rem;
             font-weight: 700;
-            /* 修改：配色与二连抽按钮完全一致 */
             background: linear-gradient(135deg, #64b5f6, #42a5f5);
             color: #0d47a1;
-            border: none; /* 与二连抽按钮一致，无边框 */
+            border: none;
             cursor: pointer;
             transition: all 0.2s ease;
-            box-shadow: 0 2px 6px rgba(100, 181, 246, 0.4); /* 与二连抽按钮阴影一致 */
+            box-shadow: 0 2px 6px rgba(100, 181, 246, 0.4);
         }
         .clear-btn:hover {
-            transform: translateY(-2px); /* 与二连抽按钮悬停效果一致 */
-            box-shadow: 0 4px 8px rgba(100, 181, 246, 0.5); /* 与二连抽按钮悬停阴影一致 */
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(100, 181, 246, 0.5);
         }
         .clear-btn:active {
             transform: translateY(0);
         }
-        /* 新增：今日幸运星座组件样式 */
         .zodiac-container {
             position: fixed;
-            top: 40px; /* 统一边距 */
-            left: 40px; /* 定位在左上角 */
+            top: 40px;
+            left: 40px;
             background: rgba(255, 255, 255, 0.98);
-            width: 250px; /* 与其它组件统一宽度 */
+            width: 250px;
             border-radius: 16px;
             padding: 14px 18px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
@@ -513,13 +513,11 @@
 </head>
 <body>
     <div class="container">
-        <h1>点名机 V7.6</h1>
+        <h1>点名机 V8.0</h1>
         <p class="subtitle">高二（1）班 · 57位同学</p>
-        <!-- 单人模式 -->
         <div id="singleDisplay" class="name-display">
             <div id="name" class="name">点击开始</div>
         </div>
-        <!-- 双人模式 -->
         <div id="dualDisplay" class="dual-name-display">
             <div class="name-box">
                 <div id="name1" class="dual-name">第一位</div>
@@ -531,34 +529,32 @@
         <button id="actionBtn" class="btn btn-start initial">开始</button>
         <div id="result" class="result" style="display: none;"></div>
     </div>
+
+    <!-- 新增：打开游戏抽奖机按钮 -->
+    <a href="https://lt.sycz.eu.org/loading.html" class="game-btn">打开游戏抽奖机</a>
+
+    <!-- 原有：自动2连抽按钮 -->
     <button id="autoBtn" class="auto-btn">自动2连抽</button>
+
+    <!-- 更新日志：仅保留一行 -->
     <div class="changelog">
         <h4>更新日志</h4>
-        <p>• 优化随机算法以防止多次抽到同一同学</p>
-        <p>• 修复部分同学可能概率不正常的问题</p>
-        <p>• 增加幸运星座组件</p>
-        <p>• 增加统计组件</p>
-        <p>• 优化彩带动画</p>
-        <p>• 更换蓝色配色</p>
+        <p>• 添加了随机游戏抽奖机</p>
     </div>
-    <!-- 新增：今日幸运儿组件 -->
+
     <div class="lucky-container">
         <h4>今日幸运儿</h4>
-        <div id="luckyList" class="lucky-list">
-            <!-- 抽中的名字将动态添加到这里 -->
-        </div>
-        <!-- 新增：删除全部记录按钮 -->
+        <div id="luckyList" class="lucky-list"></div>
         <button id="clearLuckyBtn" class="clear-btn">删除全部记录</button>
     </div>
-    <!-- 新增：今日幸运星座组件 -->
+
     <div class="zodiac-container">
         <h4>今日幸运星座</h4>
-        <div id="zodiacContent" class="zodiac-content">
-            <!-- 星座内容将由JavaScript动态填充 -->
-        </div>
+        <div id="zodiacContent" class="zodiac-content"></div>
     </div>
-    <!-- 彩带动画 Canvas -->
+
     <canvas id="confetti-canvas"></canvas>
+
     <script>
         const allStudents = [
             "肖俊宇", "申弈涵", "寇乐乐", "潘云飞", "陈若宣", "薛天齐", "邹辰昱", "杭义浩", "陈诗涵",
@@ -568,18 +564,15 @@
             "刘明镪", "李奕彤", "陈思月", "俞晓宇", "王致远", "曹心晨", "丁子迁", "邓承希", "周嘉鑫",
             "黄周逸凡", "曹梓杨", "戴逸瑄", "李俊熙", "夏思宇", "黄稼明", "钱浩泽", "钱泽一"
         ];
-        // 新增：定义“幽灵学生”数组，他们在滚动时可见，但不会成为最终结果
         const ghostStudents = ["杨珂权", "邹辰昱", "王致远", "黄稼明"];
-        // ================= 核心功能：从localStorage加载或初始化今日已抽中名单 =================
+
         function loadOrInitDrawnStudents() {
-            const today = new Date().toDateString(); // 获取今天的日期字符串，如 "Mon Jun 10 2024"
+            const today = new Date().toDateString();
             let storedData = null;
-            // 防止因浏览器不支持localStorage而报错
             try {
                 storedData = localStorage.getItem('drawnStudentsData');
             } catch (e) {
                 console.warn('localStorage is not supported or disabled.');
-                // 即使不支持，也初始化为空数组
                 drawnStudents = [];
                 renderLuckyList();
                 return;
@@ -587,10 +580,8 @@
             if (storedData) {
                 try {
                     const parsedData = JSON.parse(storedData);
-                    // 检查是否是今天的数据
                     if (parsedData.date === today) {
                         drawnStudents = parsedData.students || [];
-                        // 重新渲染DOM
                         renderLuckyList();
                         return;
                     }
@@ -598,29 +589,22 @@
                     console.warn('Failed to parse stored drawn students data.');
                 }
             }
-            // 如果没有数据或是旧数据，则初始化为空数组
             drawnStudents = [];
-            saveDrawnStudentsToStorage(); // 保存初始状态
+            saveDrawnStudentsToStorage();
         }
-        // 保存已抽中名单到localStorage
+
         function saveDrawnStudentsToStorage() {
             const today = new Date().toDateString();
-            const dataToSave = {
-                date: today,
-                students: drawnStudents
-            };
-            // 防止因浏览器不支持localStorage而报错
+            const dataToSave = { date: today, students: drawnStudents };
             try {
                 localStorage.setItem('drawnStudentsData', JSON.stringify(dataToSave));
             } catch (e) {
                 console.warn('Failed to save data to localStorage:', e);
-                // 即使保存失败，也不影响当前功能
             }
         }
-        // 渲染已抽中名单到DOM (即“今日幸运儿”)
+
         function renderLuckyList() {
-            luckyListElement.innerHTML = ''; // 清空现有内容
-            // 从后往前渲染，保证最新抽中的在最前面（与添加顺序一致）
+            luckyListElement.innerHTML = '';
             for (let i = drawnStudents.length - 1; i >= 0; i--) {
                 const listItem = document.createElement('div');
                 listItem.className = 'lucky-item';
@@ -628,28 +612,23 @@
                 luckyListElement.appendChild(listItem);
             }
         }
-        // 更新已抽中名单的函数（包含持久化存储）
+
         function updateDrawnList(name) {
-            // 创建一个新的列表项
             const listItem = document.createElement('div');
             listItem.className = 'lucky-item';
             listItem.textContent = name;
-            // 将新项添加到列表顶部（DOM操作）
             luckyListElement.prepend(listItem);
-            // 记录到数组
             drawnStudents.push(name);
-            // 保存到localStorage
             saveDrawnStudentsToStorage();
         }
-        // 清空今日已抽中记录
+
         function clearDrawnRecords() {
-            // 直接清空
             drawnStudents = [];
             luckyListElement.innerHTML = '';
             saveDrawnStudentsToStorage();
-            // 无 alert 提示
         }
-        let drawnStudents = []; // 用于记录今日已被抽中的学生
+
+        let drawnStudents = [];
         let isRunning = false;
         let intervalId = null;
         let intervalId1 = null;
@@ -657,6 +636,7 @@
         let drawCount = 0;
         let isDualMode = false;
         let autoDrawTimeout = null;
+
         const nameElement = document.getElementById('name');
         const name1Element = document.getElementById('name1');
         const name2Element = document.getElementById('name2');
@@ -665,80 +645,71 @@
         const autoBtn = document.getElementById('autoBtn');
         const singleDisplay = document.getElementById('singleDisplay');
         const dualDisplay = document.getElementById('dualDisplay');
-        // 新增：获取今日幸运儿列表的 DOM 元素
         const luckyListElement = document.getElementById('luckyList');
-        // 新增：获取删除按钮
         const clearLuckyBtn = document.getElementById('clearLuckyBtn');
-        // 新增：获取今日幸运星座内容的 DOM 元素
         const zodiacContentElement = document.getElementById('zodiacContent');
-        // 定义星座列表（按顺序）
+
         const zodiacSigns = [
             "白羊座", "金牛座", "双子座", "巨蟹座", "狮子座", "处女座",
             "天秤座", "天蝎座", "射手座", "摩羯座", "水瓶座", "双鱼座"
         ];
-        // ================= 核心功能：根据日期计算固定星座 =================
+
         function getZodiacByDate() {
             const today = new Date();
-            const dayOfMonth = today.getDate(); // 获取当前是几号 (1-31)
-            // 使用模运算将1-31映射到0-11，实现循环分配
+            const dayOfMonth = today.getDate();
             const index = (dayOfMonth - 1) % zodiacSigns.length;
             return zodiacSigns[index];
         }
-        // 确保页面从顶部开始
+
         window.addEventListener('load', function() {
             window.scrollTo(0, 0);
-            // 初始化幸运星座（基于日期，固定不变）
             zodiacContentElement.textContent = getZodiacByDate();
-            // 加载或初始化已抽中名单
             loadOrInitDrawnStudents();
         });
-        // 防止页面刷新时保持滚动位置
+
         if ('scrollRestoration' in history) {
             history.scrollRestoration = 'manual';
         }
+
         function switchToSingleMode() {
             isDualMode = false;
             singleDisplay.style.display = 'flex';
             dualDisplay.classList.remove('active');
             actionBtn.style.display = 'block';
         }
+
         function switchToDualMode() {
             isDualMode = true;
             singleDisplay.style.display = 'none';
             dualDisplay.classList.add('active');
             actionBtn.style.display = 'none';
         }
+
         function clearAllIntervals() {
             if (intervalId) clearInterval(intervalId);
             if (intervalId1) clearInterval(intervalId1);
             if (intervalId2) clearInterval(intervalId2);
             if (autoDrawTimeout) clearTimeout(autoDrawTimeout);
         }
-        // ================= 彩带动画函数（粒子数量改为100） =================
-        let isConfettiPlaying = false; // 标志位，防止动画重叠播放
+
+        let isConfettiPlaying = false;
         function launchConfetti() {
-            // 如果动画正在播放，则不再触发
-            if (isConfettiPlaying) {
-                return;
-            }
+            if (isConfettiPlaying) return;
             isConfettiPlaying = true;
             const canvas = document.getElementById('confetti-canvas');
             const ctx = canvas.getContext('2d');
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             canvas.style.display = 'block';
-            // 修改：将粒子数量改为 100
             const confettiCount = 100;
-            // 使用蓝色系颜色 + 彩色系颜色
             const blueColors = ['#2196f3', '#64b5f6', '#bbdefb', '#1976d2', '#0d47a1', '#e3f2fd', '#42a5f5'];
             const colorfulColors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#54a0ff', '#5f27cd'];
-            const confettiColors = [...blueColors, ...colorfulColors]; // 合并两种颜色数组
+            const confettiColors = [...blueColors, ...colorfulColors];
             let confetti = [];
-            // 初始化粒子
             for (let i = 0; i < confettiCount; i++) {
                 confetti.push({
                     x: Math.random() * canvas.width,
-                    y: Math.random() * -canvas.height, // 从屏幕上方开始
+                    y: Math.random() * -canvas.height,
                     size: Math.random() * 8 + 5,
                     color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
                     speed: Math.random() * 3 + 2,
@@ -749,7 +720,6 @@
                 let stillFalling = false;
                 confetti.forEach(particle => {
                     particle.y += particle.speed;
-                    // 简化绘制：直接绘制圆形，不进行旋转
                     if (particle.y < canvas.height + 20) {
                         stillFalling = true;
                         ctx.fillStyle = particle.color;
@@ -759,20 +729,19 @@
                     }
                 });
                 if (stillFalling) {
-                    // 使用兼容性更好的 setTimeout 作为 requestAnimationFrame 的回退
                     if (window.requestAnimationFrame) {
                         requestAnimationFrame(animate);
                     } else {
-                        setTimeout(animate, 16); // ~60fps
+                        setTimeout(animate, 16);
                     }
                 } else {
                     canvas.style.display = 'none';
-                    isConfettiPlaying = false; // 动画结束，重置标志位
+                    isConfettiPlaying = false;
                 }
             }
             animate();
         }
-        // ================= 动画函数结束 =================
+
         function startRolling() {
             if (isRunning) {
                 stopRolling();
@@ -780,14 +749,10 @@
             }
             isRunning = true;
             resultElement.style.display = 'none';
-            // 移除初始动画类
             actionBtn.classList.remove('initial');
             if (!isDualMode) {
                 nameElement.classList.add('rolling');
-                if (intervalId) {
-                    clearInterval(intervalId);
-                }
-                // 修改：滚动间隔改为 50ms
+                if (intervalId) clearInterval(intervalId);
                 intervalId = setInterval(() => {
                     const randomIndex = Math.floor(Math.random() * allStudents.length);
                     nameElement.textContent = allStudents[randomIndex];
@@ -796,6 +761,7 @@
                 actionBtn.className = 'btn btn-stop';
             }
         }
+
         function startDualRolling() {
             if (isRunning) {
                 clearAllIntervals();
@@ -808,7 +774,6 @@
             resultElement.style.display = 'none';
             name1Element.classList.add('rolling');
             name2Element.classList.add('rolling');
-            // 修改：滚动间隔改为 50ms
             intervalId1 = setInterval(() => {
                 const randomIndex = Math.floor(Math.random() * allStudents.length);
                 name1Element.textContent = allStudents[randomIndex];
@@ -818,26 +783,21 @@
                 name2Element.textContent = allStudents[randomIndex];
             }, 50);
         }
-        // 核心抽取函数：确保抽中的不是幽灵学生且今天未被抽过
+
         function drawValidStudent() {
             const availableStudents = allStudents.filter(student => 
                 !drawnStudents.includes(student) && !ghostStudents.includes(student)
             );
-            if (availableStudents.length === 0) {
-                return null; // 无有效学生可抽
-            }
+            if (availableStudents.length === 0) return null;
             const randomIndex = Math.floor(Math.random() * availableStudents.length);
             return availableStudents[randomIndex];
         }
+
         function stopRolling() {
-            if (intervalId) {
-                clearInterval(intervalId);
-            }
+            if (intervalId) clearInterval(intervalId);
             isRunning = false;
             nameElement.classList.remove('rolling');
-            let result;
-            // 尝试抽取一个有效的学生
-            result = drawValidStudent();
+            let result = drawValidStudent();
             if (result === null) {
                 alert("所有有效同学今天都已抽过一遍！点击“删除全部记录”可重置。");
                 nameElement.textContent = "无人可抽";
@@ -845,26 +805,22 @@
                 actionBtn.className = 'btn btn-start';
                 return;
             }
-            // 更新 DOM 和存储
             updateDrawnList(result);
             nameElement.textContent = result;
             actionBtn.textContent = '开始';
             actionBtn.className = 'btn btn-start';
             resultElement.innerHTML = '<p class="result-text">🎉 查 ' + result + ' 同学被选中！</p>';
             resultElement.style.display = 'block';
-            // 播放彩带动画（防重叠）
             launchConfetti();
             return result;
         }
+
         function stopDualRolling() {
             if (intervalId1) clearInterval(intervalId1);
             if (intervalId2) clearInterval(intervalId2);
             isRunning = false;
             name1Element.classList.remove('rolling');
             name2Element.classList.remove('rolling');
-            // 获取两个随机结果
-            const results = [];
-            // 尝试抽取第一个有效的学生
             let firstResult = drawValidStudent();
             if (firstResult === null) {
                 alert("剩余有效同学不足两人！点击“删除全部记录”可重置。");
@@ -872,8 +828,6 @@
                 name2Element.textContent = "无人可抽";
                 return;
             }
-            results.push(firstResult);
-            // 尝试抽取第二个有效的学生（需排除第一个）
             const availableStudents = allStudents.filter(student => 
                 !drawnStudents.includes(student) && 
                 !ghostStudents.includes(student) && 
@@ -887,18 +841,16 @@
             }
             const randomIndex2 = Math.floor(Math.random() * availableStudents.length);
             let secondResult = availableStudents[randomIndex2];
-            results.push(secondResult);
-            // 更新 DOM 和存储
-            updateDrawnList(results[1]); // 先添加第二个
-            updateDrawnList(results[0]); // 再添加第一个，使其在列表顶部
-            name1Element.textContent = results[0];
-            name2Element.textContent = results[1];
-            resultElement.innerHTML = '<p class="result-text">🎉 查 ' + results[0] + ' ' + results[1] + ' 同学被选中！</p>';
+            updateDrawnList(secondResult);
+            updateDrawnList(firstResult);
+            name1Element.textContent = firstResult;
+            name2Element.textContent = secondResult;
+            resultElement.innerHTML = '<p class="result-text">🎉 查 ' + firstResult + ' ' + secondResult + ' 同学被选中！</p>';
             resultElement.style.display = 'block';
-            // 播放彩带动画（防重叠）
             launchConfetti();
-            return results;
+            return [firstResult, secondResult];
         }
+
         function autoDraw() {
             clearAllIntervals();
             if (isRunning) {
@@ -916,11 +868,10 @@
                 }, 5000);
             }, 3000);
         }
+
         actionBtn.addEventListener('click', startRolling);
         autoBtn.addEventListener('click', autoDraw);
-        // 为删除按钮绑定事件
         clearLuckyBtn.addEventListener('click', clearDrawnRecords);
-        // 初始化为单人模式
         switchToSingleMode();
     </script>
 </body>
