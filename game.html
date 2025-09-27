@@ -261,13 +261,13 @@
         .attachment-content {
             width: 95%;
             max-width: 1200px;
-            max-height: 95vh; /* 限制整体高度 */
+            max-height: 95vh;
             background: white;
             border-radius: 18px;
             padding: 0;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(0, 0, 0, 0.05);
-            overflow: auto;
+            overflow: hidden; /* 👈 关键：视频模式下无滚动条 */
             margin: auto;
             display: flex;
             flex-direction: column;
@@ -285,6 +285,8 @@
         
         .attachment-text-container {
             padding: 25px;
+            overflow: auto; /* 文字内容可滚动 */
+            max-height: calc(95vh - 150px); /* 预留标题和间距 */
         }
         
         .attachment-text {
@@ -296,7 +298,7 @@
         .attachment-video {
             width: 100%;
             height: auto;
-            max-height: 95vh; /* 视频最大高度 95% 视口 */
+            max-height: 95vh;
             border-radius: 14px;
             overflow: hidden;
             box-shadow: 0 6px 20px rgba(0,0,0,0.15);
@@ -308,7 +310,7 @@
             width: 100%;
             height: auto;
             max-height: 95vh;
-            object-fit: contain; /* 保证完整显示 */
+            object-fit: contain;
             display: block;
         }
         
@@ -420,7 +422,7 @@
         let isRolling = false;
         let rollInterval = null;
         let availableGames = [];
-        let currentIndex = 0; // 用于顺序滚动
+        let currentIndex = 0;
         
         function initProgramList() {
             programItemsEl.innerHTML = '';
@@ -455,7 +457,7 @@
                     toggleRolling();
                 } else {
                     clearInterval(rollInterval);
-                    currentIndex = 0; // 重置索引
+                    currentIndex = 0;
                     rollInterval = setInterval(() => {
                         const game = currentPool[currentIndex];
                         gameNameEl.innerHTML = game.name.replace(/\n/g, '<br>');
@@ -497,7 +499,6 @@
                 namerBtn.classList.remove('rolling');
                 isRolling = false;
                 
-                // 显示当前停止时的游戏
                 const currentPool = getFilteredGames();
                 const stoppedGame = currentPool[(currentIndex - 1 + currentPool.length) % currentPool.length];
                 showGameDetail(stoppedGame);
@@ -538,8 +539,13 @@
         }
         
         function backToHome() {
+            // 👇 停止所有视频，消除声音
+            document.querySelectorAll('video').forEach(video => {
+                video.pause();
+                video.currentTime = 0;
+            });
+
             backHomeBtn.style.display = 'none';
-            
             programListEl.style.display = 'block';
             attachmentContentEl.style.display = 'none';
             gameNameEl.innerHTML = '点击开始按钮<br>抽取游戏';
