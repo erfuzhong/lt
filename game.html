@@ -17,19 +17,16 @@
         body {
             height: 100vh;
             overflow: hidden;
-            /* 苹果风渐变背景 - 使用明亮清新的色彩 */
             background: linear-gradient(135deg, #0071e3 0%, #34aadc 30%, #4cd964 60%, #ffcc00 80%, #ff9500 100%);
             display: flex;
             color: #333;
         }
         
-        /* 左侧组件 - 40%宽度 */
         .game-selector {
-            width: 40%;
+            width: 30%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(10px);
-            padding: 30px;
+            background: rgba(255, 255, 255, 0.60); /* 左侧 0.60 */
+            padding: 40px 0;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -65,53 +62,108 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
         
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            background: white;
+            padding: 8px 16px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        
+        .toggle-label {
+            font-size: 1.2rem;
+            color: #1d1d1f;
+            margin-right: 12px;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .3s;
+            border-radius: 26px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #30d158;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+        
         .game-name {
             font-size: 1.8rem;
             font-weight: 600;
-            height: 80px;
+            height: 100px;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            margin-bottom: 30px;
-            padding: 0 20px;
+            margin-bottom: 25px;
+            width: 90%;
             background: white;
-            border-radius: 16px; /* 圆角大小 */
+            border-radius: 16px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             transition: all 0.3s ease;
-            min-width: 300px;
-            word-break: break-all;
+            word-break: normal;
+            white-space: pre-line;
+            line-height: 1.4;
             border: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 0 15px;
         }
         
         .game-name.rolling {
-            /* 苹果风渐变 - 使用系统蓝 */
             background: linear-gradient(45deg, #0071e3, #0a84ff);
             color: white;
-            animation: pulse 1s infinite alternate;
             box-shadow: 0 6px 24px rgba(0, 113, 227, 0.4);
         }
         
-        @keyframes pulse {
-            from { transform: scale(1); }
-            to { transform: scale(1.03); }
-        }
-        
         .btn {
-            padding: 15px 0; /* 移除左右padding，使用width控制宽度 */
+            padding: 15px 0;
             font-size: 1.4rem;
             font-weight: bold;
             border: none;
-            border-radius: 16px; /* 与游戏名框圆角一致 */
+            border-radius: 16px;
             cursor: pointer;
-            /* 苹果系统绿色 */
             background: linear-gradient(45deg, #30d158, #32d74b);
             color: white;
             box-shadow: 0 6px 18px rgba(48, 209, 88, 0.4);
             transition: all 0.3s ease;
             outline: none;
             font-weight: 600;
-            width: 220px; /* 固定宽度 220px */
+            width: 220px;
         }
         
         .btn:hover {
@@ -125,7 +177,6 @@
         }
         
         .btn.stop {
-            /* 苹果系统红色 */
             background: linear-gradient(45deg, #ff453a, #ff3b30);
             box-shadow: 0 6px 18px rgba(255, 69, 58, 0.4);
         }
@@ -136,7 +187,6 @@
         
         .btn-namer {
             margin-top: 15px;
-            /* 默认浅绿色 */
             background: linear-gradient(45deg, #a1e8af, #74d18f);
             box-shadow: 0 6px 18px rgba(116, 209, 143, 0.4);
         }
@@ -146,7 +196,6 @@
         }
         
         .btn-namer.rolling {
-            /* 滚动时浅红色 */
             background: linear-gradient(45deg, #ffdad6, #ffaba8);
             box-shadow: 0 6px 18px rgba(255, 171, 168, 0.4);
         }
@@ -155,45 +204,91 @@
             box-shadow: 0 8px 24px rgba(255, 171, 168, 0.6);
         }
         
-        /* 右侧组件 - 60%宽度 */
         .game-attachment {
-            width: 60%;
+            width: 70%;
             height: 100%;
-            padding: 30px;
+            padding: 30px 0 0 0;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.55); /* 右侧 0.55 */
             overflow: auto;
             border-left: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .program-list {
+            width: 95%;
+            max-width: 1200px;
+            background: white;
+            border-radius: 18px;
+            padding: 20px 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            margin: auto;
+            flex-shrink: 0;
+        }
+        
+        .program-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #1d1d1f;
+            text-align: left;
+        }
+        
+        .program-items {
+            list-style: none;
+            padding: 0;
+            columns: 2;
+            column-gap: 20px;
+        }
+        
+        .program-items li {
+            padding: 6px 0;
+            font-size: 1.4rem;
+            break-inside: avoid;
+            color: #333;
+            line-height: 1.2;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        
+        .program-items li:hover {
+            color: #0071e3;
+            text-decoration: underline;
+        }
+        
+        .attachment-content {
+            width: 95%;
+            max-width: 1200px;
+            max-height: 95%;
+            background: white;
+            border-radius: 18px;
+            padding: 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            overflow: auto;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
         }
         
         .attachment-title {
             font-size: 2rem;
             font-weight: bold;
-            margin-bottom: 25px;
+            margin: 25px 0 20px 0;
             color: #1d1d1f;
             text-align: center;
+            width: 100%;
+            padding: 0 20px;
         }
         
-        .attachment-content {
-            width: 95%; /* 占右侧区域95% */
-            max-width: 1200px;
-            max-height: 95%; /* 最高占95% */
-            background: white;
-            border-radius: 18px;
+        .attachment-text-container {
             padding: 25px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            overflow: auto;
-            display: flex;
-            flex-direction: column;
         }
         
         .attachment-text {
-            font-size: 1.8rem; /* 保持1.8rem字体大小 */
+            font-size: 1.8rem;
             line-height: 1.8;
             color: #1d1d1f;
         }
@@ -201,112 +296,95 @@
         .attachment-video {
             width: 100%;
             height: auto;
-            max-height: 60vh; /* 限制最大高度 */
+            max-height: 80vh;
             border-radius: 14px;
             overflow: hidden;
             box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            margin-top: 10px;
             background: #000;
+            position: relative;
         }
         
         .attachment-video video {
             width: 100%;
-            height: 100%;
-            object-fit: contain; /* 完整显示，不裁剪 */
+            height: auto;
+            min-height: 100%;
+            max-height: 80vh;
+            object-fit: contain;
             display: block;
         }
         
-        .placeholder {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            text-align: center;
-            color: #86868b;
+        /* 返回主页按钮 */
+        .back-home-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            font-size: 1.3rem; /* 字体大小 1.3rem */
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: none;
         }
         
-        .placeholder p {
-            font-size: 1.4rem;
-            font-weight: 500;
+        .back-home-btn:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: translateY(-2px);
+        }
+        
+        .placeholder {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <!-- 左侧组件 -->
     <div class="game-selector">
         <h1 class="title">随机小游戏</h1>
-        <div class="game-name" id="gameName">点击开始按钮抽取游戏</div>
+        <div class="game-name" id="gameName">点击开始按钮<br>抽取游戏</div>
+        
+        <div class="toggle-container">
+            <span class="toggle-label">只抽舞蹈/歌曲</span>
+            <label class="toggle-switch">
+                <input type="checkbox" id="danceOnlyToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+        
         <button class="btn" id="startBtn">开始</button>
         <button class="btn btn-namer" id="namerBtn">打开点名机</button>
     </div>
     
-    <!-- 右侧组件 -->
     <div class="game-attachment">
-        <div class="placeholder" id="placeholder">
-            <p>抽取游戏后，这里将显示游戏详情</p>
+        <div class="program-list" id="programList">
+            <!-- 标题已更新 -->
+            <h2 class="program-title">节目单 [点击游戏名查看详情]</h2>
+            <ul class="program-items" id="programItems"></ul>
         </div>
+        
         <div class="attachment-content" id="attachmentContent" style="display: none;">
             <h2 class="attachment-title" id="attachmentTitle">游戏详情</h2>
             <div id="attachmentInner"></div>
         </div>
     </div>
+    
+    <button class="back-home-btn" id="backHomeBtn">返回主页</button>
 
     <script>
-        // 游戏预设数据（30个，其中只有部分有实际内容）
         const games = [
-            {
-                name: "唱《说句实话》40秒片段",
-                type: "video",
-                content: "https://lt.sycz.eu.org/说句实话.mp4"
-            },
-            {
-                name: "跳舞视频：街舞基础",
-                type: "video",
-                content: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
-            },
-            {
-                name: "唱歌挑战：高音挑战",
-                type: "text",
-                content: "尝试唱出你最高音！从简单的音阶开始，逐步挑战更高音域。注意保护嗓子，不要过度用力。"
-            },
-            {
-                name: "平衡挑战：头顶书本行走",
-                type: "text",
-                content: "在头顶放一本书，保持平衡走直线10米。这个挑战能锻炼你的专注力和身体协调性。"
-            },
-            {
-                name: "跳舞视频：拉丁舞入门",
-                type: "video",
-                content: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
-            },
-            {
-                name: "唱歌挑战：经典老歌接龙",
-                type: "text",
-                content: "随机选择一首经典老歌，尝试唱出副歌部分。可以邀请朋友一起玩接龙游戏！"
-            },
-            {
-                name: "挑战：一分钟平板支撑",
-                type: "text",
-                content: "保持标准平板支撑姿势60秒。注意保持身体成一条直线，不要塌腰或翘臀。"
-            },
-            {
-                name: "跳舞视频：K-pop热舞",
-                type: "video",
-                content: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
-            },
-            {
-                name: "唱歌挑战：情歌对唱",
-                type: "text",
-                content: "选择一首经典情歌，尝试和朋友或家人对唱。注意情感表达和音准配合。"
-            },
-            {
-                name: "挑战：闭眼原地转圈10圈",
-                type: "text",
-                content: "闭上眼睛原地转圈10圈后，尝试走直线。这个挑战会考验你的平衡感和方向感！"
-            },
-            // 其他20个预设（只有名称，没有实际内容）
+            { name: "挑战：单脚站立\n1分钟", type: "text", content: "规则：单脚站立，保持平衡60秒。可以尝试闭眼增加难度！这个挑战能有效锻炼你的平衡感和核心肌群。" },
+            { name: "跳舞视频：\n街舞基础", type: "video", content: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4" },
+            { name: "唱歌挑战：\n高音挑战", type: "text", content: "尝试唱出你最高音！从简单的音阶开始，逐步挑战更高音域。注意保护嗓子，不要过度用力。" },
+            { name: "平衡挑战：\n头顶书本行走", type: "text", content: "在头顶放一本书，保持平衡走直线10米。这个挑战能锻炼你的专注力和身体协调性。" },
+            { name: "跳舞视频：\n拉丁舞入门", type: "video", content: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4" },
+            { name: "唱歌挑战：\n经典老歌接龙", type: "text", content: "随机选择一首经典老歌，尝试唱出副歌部分。可以邀请朋友一起玩接龙游戏！" },
+            { name: "挑战：一分钟\n平板支撑", type: "text", content: "保持标准平板支撑姿势60秒。注意保持身体成一条直线，不要塌腰或翘臀。" },
+            { name: "跳舞视频：\nK-pop热舞", type: "video", content: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4" },
+            { name: "唱歌挑战：\n情歌对唱", type: "text", content: "选择一首经典情歌，尝试和朋友或家人对唱。注意情感表达和音准配合。" },
+            { name: "挑战：闭眼原地\n转圈10圈", type: "text", content: "闭上眼睛原地转圈10圈后，尝试走直线。这个挑战会考验你的平衡感和方向感！" },
             { name: "挑战：一分钟跳绳", type: null },
             { name: "跳舞视频：芭蕾基础", type: null },
             { name: "唱歌挑战：儿歌串烧", type: null },
@@ -329,97 +407,159 @@
             { name: "跳舞视频：民族舞入门", type: null }
         ];
         
-        // 获取DOM元素
         const gameNameEl = document.getElementById('gameName');
         const startBtn = document.getElementById('startBtn');
         const namerBtn = document.getElementById('namerBtn');
-        const placeholderEl = document.getElementById('placeholder');
+        const danceOnlyToggle = document.getElementById('danceOnlyToggle');
+        const programListEl = document.getElementById('programList');
+        const programItemsEl = document.getElementById('programItems');
         const attachmentContentEl = document.getElementById('attachmentContent');
         const attachmentTitleEl = document.getElementById('attachmentTitle');
         const attachmentInnerEl = document.getElementById('attachmentInner');
+        const backHomeBtn = document.getElementById('backHomeBtn');
         
-        // 状态变量
         let isRolling = false;
         let rollInterval = null;
         let availableGames = [];
         
-        // 初始化：过滤出有实际内容的游戏
-        function initAvailableGames() {
-            availableGames = games.filter(game => game.type !== null);
+        function initProgramList() {
+            programItemsEl.innerHTML = '';
+            const displayableGames = games.filter(game => game.type !== null);
+            displayableGames.forEach(game => {
+                const li = document.createElement('li');
+                li.textContent = game.name.replace(/\n/g, ' ');
+                li.dataset.name = game.name;
+                li.addEventListener('click', () => showGameDetail(game));
+                programItemsEl.appendChild(li);
+            });
         }
         
-        // 开始/停止滚动
+        function initAvailableGames() {
+            availableGames = games.filter(game => game.type !== null);
+            initProgramList();
+        }
+        
+        function getFilteredGames() {
+            if (danceOnlyToggle.checked) {
+                return availableGames.filter(game => game.type === 'video');
+            } else {
+                return availableGames;
+            }
+        }
+        
+        danceOnlyToggle.addEventListener('change', () => {
+            if (isRolling) {
+                const currentPool = getFilteredGames();
+                if (currentPool.length === 0) {
+                    alert('没有可抽取的舞蹈/歌曲视频！');
+                    toggleRolling();
+                } else {
+                    clearInterval(rollInterval);
+                    rollInterval = setInterval(() => {
+                        const randomGame = currentPool[Math.floor(Math.random() * currentPool.length)];
+                        gameNameEl.innerHTML = randomGame.name.replace(/\n/g, '<br>');
+                    }, 80);
+                }
+            }
+        });
+        
         function toggleRolling() {
             if (!isRolling) {
-                // 开始滚动
+                const currentPool = getFilteredGames();
+                if (currentPool.length === 0) {
+                    alert('没有可抽取的舞蹈/歌曲视频！');
+                    return;
+                }
+                
                 startBtn.textContent = '停！';
                 startBtn.classList.add('stop');
                 gameNameEl.classList.add('rolling');
-                namerBtn.classList.add('rolling'); // 同步变浅红色
+                namerBtn.classList.add('rolling');
                 isRolling = true;
                 
-                // 隐藏附件内容，显示占位符
-                placeholderEl.style.display = 'flex';
-                attachmentContentEl.style.display = 'none';
+                backHomeBtn.style.display = 'none';
                 
-                // 开始滚动效果（80ms延迟）
+                attachmentContentEl.style.display = 'none';
+                programListEl.style.display = 'block';
+                
                 rollInterval = setInterval(() => {
-                    const randomGame = availableGames[Math.floor(Math.random() * availableGames.length)];
-                    gameNameEl.textContent = randomGame.name;
-                }, 80); // 80ms滚动延迟
+                    const randomGame = currentPool[Math.floor(Math.random() * currentPool.length)];
+                    gameNameEl.innerHTML = randomGame.name.replace(/\n/g, '<br>');
+                }, 80);
             } else {
-                // 停止滚动
                 clearInterval(rollInterval);
                 startBtn.textContent = '开始';
                 startBtn.classList.remove('stop');
                 gameNameEl.classList.remove('rolling');
-                namerBtn.classList.remove('rolling'); // 恢复浅绿色
+                namerBtn.classList.remove('rolling');
                 isRolling = false;
                 
-                // 显示选中的游戏附件
-                showAttachment(gameNameEl.textContent);
+                showAttachment(gameNameEl.innerHTML);
             }
         }
         
-        // 显示游戏附件
-        function showAttachment(gameName) {
-            const game = availableGames.find(g => g.name === gameName);
+        function showGameDetail(game) {
+            backHomeBtn.style.display = 'block';
+            
+            programListEl.style.display = 'none';
+            attachmentContentEl.style.display = 'flex';
+            
+            if (game.type === 'video') {
+                attachmentTitleEl.style.display = 'none';
+                attachmentInnerEl.innerHTML = `
+                    <div class="attachment-video">
+                        <video controls>
+                            <source src="${game.content}" type="video/mp4">
+                            您的浏览器不支持视频播放。
+                        </video>
+                    </div>
+                `;
+            } else {
+                attachmentTitleEl.style.display = 'block';
+                attachmentTitleEl.textContent = game.name.replace(/\n/g, ' ');
+                attachmentInnerEl.innerHTML = `
+                    <div class="attachment-text-container">
+                        <div class="attachment-text">${game.content}</div>
+                    </div>
+                `;
+            }
+        }
+        
+        function showAttachment(displayedHTML) {
+            const displayedText = displayedHTML.replace(/<br\s*\/?>/gi, '\n');
+            const cleanName = displayedText.replace(/\n/g, '');
+            const currentPool = getFilteredGames();
+            const game = currentPool.find(g => g.name.replace(/\n/g, '') === cleanName);
             
             if (game) {
-                attachmentTitleEl.textContent = game.name;
-                
-                if (game.type === 'text') {
-                    attachmentInnerEl.innerHTML = `<div class="attachment-text">${game.content}</div>`;
-                } else if (game.type === 'video') {
-                    attachmentInnerEl.innerHTML = `
-                        <div class="attachment-video">
-                            <video controls>
-                                <source src="${game.content}" type="video/mp4">
-                                您的浏览器不支持视频播放。
-                            </video>
-                        </div>
-                    `;
-                }
-                
-                placeholderEl.style.display = 'none';
-                attachmentContentEl.style.display = 'flex';
+                showGameDetail(game);
             }
         }
         
-        // 跳转到点名机
         function openNamer() {
-            // 只有在非滚动状态才允许跳转
             if (!isRolling) {
                 window.location.href = 'https://lt.sycz.eu.org/loading2.html';
             }
         }
         
-        // 初始化
-        initAvailableGames();
+        function backToHome() {
+            backHomeBtn.style.display = 'none';
+            
+            programListEl.style.display = 'block';
+            attachmentContentEl.style.display = 'none';
+            gameNameEl.innerHTML = '点击开始按钮<br>抽取游戏';
+            gameNameEl.classList.remove('rolling');
+            startBtn.textContent = '开始';
+            startBtn.classList.remove('stop');
+            namerBtn.classList.remove('rolling');
+            isRolling = false;
+            if (rollInterval) clearInterval(rollInterval);
+        }
         
-        // 绑定按钮事件
+        initAvailableGames();
         startBtn.addEventListener('click', toggleRolling);
         namerBtn.addEventListener('click', openNamer);
+        backHomeBtn.addEventListener('click', backToHome);
     </script>
 </body>
 </html>
