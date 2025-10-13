@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>点名机 V8.0</title>
+    <title>点名机 V8.5</title>
     <!-- 预加载游戏抽奖机页面 -->
     <link rel="prefetch" href="https://lt.sycz.eu.org/loading.html">
     <style>
@@ -91,39 +91,6 @@
             position: relative;
             overflow: hidden;
         }
-        .dual-name-display {
-            height: 120px;
-            display: none;
-            gap: 10px;
-            margin: 16px 0;
-            animation: fadeInScale 1s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
-        }
-        .dual-name-display.active {
-            display: flex;
-        }
-        .name-box {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 15px;
-            background: #bbdefb;
-            border-radius: 20px;
-            border: 1px solid rgba(33, 150, 243, 0.3);
-            box-shadow: inset 0 2px 4px rgba(33, 150, 243, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-        @keyframes fadeInScale {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
         .name {
             font-size: 3.8rem;
             font-weight: 700;
@@ -134,17 +101,7 @@
             word-break: keep-all;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .dual-name {
-            font-size: 2.8rem;
-            font-weight: 700;
-            color: #1976d2;
-            min-height: 3rem;
-            line-height: 1.0;
-            letter-spacing: -0.03em;
-            word-break: keep-all;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .name.rolling, .dual-name.rolling {
+        .name.rolling {
             animation: nameRoll 0.1s ease-in-out infinite;
         }
         @keyframes nameRoll {
@@ -251,7 +208,7 @@
             justify-content: center;
             gap: 8px;
         }
-        .auto-btn {
+        .game-btn {
             position: fixed;
             bottom: 40px;
             right: 40px;
@@ -262,8 +219,10 @@
             font-weight: 700;
             background: linear-gradient(135deg, #64b5f6, #42a5f5);
             color: #0d47a1;
-            border: none;
-            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             box-shadow: 0 8px 24px rgba(100, 181, 246, 0.4);
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             z-index: 100;
@@ -280,46 +239,13 @@
                 transform: translateY(0);
             }
         }
-        .auto-btn:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 32px rgba(100, 181, 246, 0.5);
-        }
-        .auto-btn:active {
-            transform: translateY(-2px);
-        }
-
-        /* ===== 新增：打开游戏抽奖机按钮 ===== */
-        .game-btn {
-            position: fixed;
-            bottom: 110px; /* 与 auto-btn 保持 10px 间距 */
-            right: 40px;
-            width: 250px;
-            padding: 16px 24px;
-            border-radius: 16px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            /* 低饱和度橙色背景 */
-            background: linear-gradient(135deg, #ffcc80, #ffb74d);
-            /* 深橙色文字 */
-            color: #e65100;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 24px rgba(255, 152, 0, 0.25);
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            z-index: 100;
-            font-family: "Microsoft YaHei", "Segoe UI", Tahoma, Arial, sans-serif;
-            animation: floatIn 1s cubic-bezier(0.16, 1, 0.3, 1) 1.2s both;
-        }
         .game-btn:hover {
             transform: translateY(-4px);
-            box-shadow: 0 12px 32px rgba(255, 152, 0, 0.35);
+            box-shadow: 0 12px 32px rgba(100, 181, 246, 0.5);
         }
         .game-btn:active {
             transform: translateY(-2px);
         }
-
         .changelog {
             position: fixed;
             bottom: 40px;
@@ -513,48 +439,31 @@
 </head>
 <body>
     <div class="container">
-        <h1>点名机 V8.0</h1>
+        <h1>点名机 V8.5</h1>
         <p class="subtitle">高二（1）班 · 57位同学</p>
-        <div id="singleDisplay" class="name-display">
+        <div class="name-display">
             <div id="name" class="name">点击开始</div>
-        </div>
-        <div id="dualDisplay" class="dual-name-display">
-            <div class="name-box">
-                <div id="name1" class="dual-name">第一位</div>
-            </div>
-            <div class="name-box">
-                <div id="name2" class="dual-name">第二位</div>
-            </div>
         </div>
         <button id="actionBtn" class="btn btn-start initial">开始</button>
         <div id="result" class="result" style="display: none;"></div>
     </div>
-
-    <!-- 新增：打开游戏抽奖机按钮 -->
     <a href="https://lt.sycz.eu.org/loading.html" class="game-btn">打开游戏抽奖机</a>
-
-    <!-- 原有：自动2连抽按钮 -->
-    <button id="autoBtn" class="auto-btn">自动2连抽</button>
-
-    <!-- 更新日志：仅保留一行 -->
     <div class="changelog">
         <h4>更新日志</h4>
-        <p>• 添加了随机游戏抽奖机</p>
+        <p>• 删除自动二连抽</p>
+        <p>• 添加抽取结果自动隐藏</p>
+        <p>• 新增预定抽取机制（陈宇浩/孙嘉辰/申弈涵）</p>
     </div>
-
     <div class="lucky-container">
         <h4>今日幸运儿</h4>
         <div id="luckyList" class="lucky-list"></div>
         <button id="clearLuckyBtn" class="clear-btn">删除全部记录</button>
     </div>
-
     <div class="zodiac-container">
         <h4>今日幸运星座</h4>
         <div id="zodiacContent" class="zodiac-content"></div>
     </div>
-
     <canvas id="confetti-canvas"></canvas>
-
     <script>
         const allStudents = [
             "肖俊宇", "申弈涵", "寇乐乐", "潘云飞", "陈若宣", "薛天齐", "邹辰昱", "杭义浩", "陈诗涵",
@@ -562,9 +471,67 @@
             "杨珂权", "华伟琦", "周嘉磊", "何名浩", "陈优璇", "陈忆慧", "李霞康", "翟政炜", "卞苏晨", "潘闫宇",
             "方振兴", "李家宇", "潘佳琦", "张丹晨", "严翰知", "陈奥", "程煜扬", "李思业", "李子钰", "钱涅囷",
             "刘明镪", "李奕彤", "陈思月", "俞晓宇", "王致远", "曹心晨", "丁子迁", "邓承希", "周嘉鑫",
-            "黄周逸凡", "曹梓杨", "戴逸瑄", "李俊熙", "夏思宇", "黄稼明", "钱浩泽", "钱泽一"
+            "黄周逸凡", "曹梓杨", "戴逸瑄", "李俊熙", "夏思宇", "黄稼明", "钱浩泽", "钱泽一", "孙嘉辰"
         ];
-        const ghostStudents = ["杨珂权", "邹辰昱", "王致远", "黄稼明"];
+
+        const presetSequence = {
+            0: "陈宇浩",   // 第1次
+            1: "孙嘉辰",   // 第2次
+            3: "申弈涵"    // 第4次
+        };
+
+        let drawnStudents = [];
+        let isRunning = false;
+        let intervalId = null;
+        let hideTimeout = null;
+        let countdownInterval = null;
+        let lastSelected = null;
+
+        const nameElement = document.getElementById('name');
+        const actionBtn = document.getElementById('actionBtn');
+        const resultElement = document.getElementById('result');
+        const luckyListElement = document.getElementById('luckyList');
+        const clearLuckyBtn = document.getElementById('clearLuckyBtn');
+        const zodiacContentElement = document.getElementById('zodiacContent');
+
+        const zodiacSigns = [
+            "白羊座", "金牛座", "双子座", "巨蟹座", "狮子座", "处女座",
+            "天秤座", "天蝎座", "射手座", "摩羯座", "水瓶座", "双鱼座"
+        ];
+
+        function getZodiacByDate() {
+            const today = new Date();
+            const dayOfMonth = today.getDate();
+            const index = (dayOfMonth - 1) % zodiacSigns.length;
+            return zodiacSigns[index];
+        }
+
+        function hasPresetBeenUsedToday() {
+            const today = new Date().toDateString();
+            return localStorage.getItem('presetUsed') === today;
+        }
+
+        function getRandomAvailableStudent() {
+            const available = allStudents.filter(s => !drawnStudents.includes(s));
+            if (available.length === 0) {
+                alert("所有同学今天都已抽过一遍！点击“删除全部记录”可重置。");
+                nameElement.textContent = "无人可抽";
+                actionBtn.textContent = '开始';
+                actionBtn.className = 'btn btn-start';
+                return null;
+            }
+            return available[Math.floor(Math.random() * available.length)];
+        }
+
+        window.addEventListener('load', function() {
+            window.scrollTo(0, 0);
+            zodiacContentElement.textContent = getZodiacByDate();
+            loadOrInitDrawnStudents();
+        });
+
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
 
         function loadOrInitDrawnStudents() {
             const today = new Date().toDateString();
@@ -626,70 +593,7 @@
             drawnStudents = [];
             luckyListElement.innerHTML = '';
             saveDrawnStudentsToStorage();
-        }
-
-        let drawnStudents = [];
-        let isRunning = false;
-        let intervalId = null;
-        let intervalId1 = null;
-        let intervalId2 = null;
-        let drawCount = 0;
-        let isDualMode = false;
-        let autoDrawTimeout = null;
-
-        const nameElement = document.getElementById('name');
-        const name1Element = document.getElementById('name1');
-        const name2Element = document.getElementById('name2');
-        const actionBtn = document.getElementById('actionBtn');
-        const resultElement = document.getElementById('result');
-        const autoBtn = document.getElementById('autoBtn');
-        const singleDisplay = document.getElementById('singleDisplay');
-        const dualDisplay = document.getElementById('dualDisplay');
-        const luckyListElement = document.getElementById('luckyList');
-        const clearLuckyBtn = document.getElementById('clearLuckyBtn');
-        const zodiacContentElement = document.getElementById('zodiacContent');
-
-        const zodiacSigns = [
-            "白羊座", "金牛座", "双子座", "巨蟹座", "狮子座", "处女座",
-            "天秤座", "天蝎座", "射手座", "摩羯座", "水瓶座", "双鱼座"
-        ];
-
-        function getZodiacByDate() {
-            const today = new Date();
-            const dayOfMonth = today.getDate();
-            const index = (dayOfMonth - 1) % zodiacSigns.length;
-            return zodiacSigns[index];
-        }
-
-        window.addEventListener('load', function() {
-            window.scrollTo(0, 0);
-            zodiacContentElement.textContent = getZodiacByDate();
-            loadOrInitDrawnStudents();
-        });
-
-        if ('scrollRestoration' in history) {
-            history.scrollRestoration = 'manual';
-        }
-
-        function switchToSingleMode() {
-            isDualMode = false;
-            singleDisplay.style.display = 'flex';
-            dualDisplay.classList.remove('active');
-            actionBtn.style.display = 'block';
-        }
-
-        function switchToDualMode() {
-            isDualMode = true;
-            singleDisplay.style.display = 'none';
-            dualDisplay.classList.add('active');
-            actionBtn.style.display = 'none';
-        }
-
-        function clearAllIntervals() {
-            if (intervalId) clearInterval(intervalId);
-            if (intervalId1) clearInterval(intervalId1);
-            if (intervalId2) clearInterval(intervalId2);
-            if (autoDrawTimeout) clearTimeout(autoDrawTimeout);
+            // 注意：不重置 presetUsed，符合需求
         }
 
         let isConfettiPlaying = false;
@@ -742,137 +646,84 @@
             animate();
         }
 
+        function clearHideTimer() {
+            if (hideTimeout) clearTimeout(hideTimeout);
+            if (countdownInterval) clearInterval(countdownInterval);
+            hideTimeout = null;
+            countdownInterval = null;
+        }
+
         function startRolling() {
             if (isRunning) {
                 stopRolling();
                 return;
             }
+            clearHideTimer();
             isRunning = true;
             resultElement.style.display = 'none';
             actionBtn.classList.remove('initial');
-            if (!isDualMode) {
-                nameElement.classList.add('rolling');
-                if (intervalId) clearInterval(intervalId);
-                intervalId = setInterval(() => {
-                    const randomIndex = Math.floor(Math.random() * allStudents.length);
-                    nameElement.textContent = allStudents[randomIndex];
-                }, 50);
-                actionBtn.textContent = '停！';
-                actionBtn.className = 'btn btn-stop';
-            }
-        }
-
-        function startDualRolling() {
-            if (isRunning) {
-                clearAllIntervals();
-                isRunning = false;
-                name1Element.classList.remove('rolling');
-                name2Element.classList.remove('rolling');
-                nameElement.classList.remove('rolling');
-            }
-            isRunning = true;
-            resultElement.style.display = 'none';
-            name1Element.classList.add('rolling');
-            name2Element.classList.add('rolling');
-            intervalId1 = setInterval(() => {
+            nameElement.classList.add('rolling');
+            if (intervalId) clearInterval(intervalId);
+            intervalId = setInterval(() => {
                 const randomIndex = Math.floor(Math.random() * allStudents.length);
-                name1Element.textContent = allStudents[randomIndex];
+                nameElement.textContent = allStudents[randomIndex];
             }, 50);
-            intervalId2 = setInterval(() => {
-                const randomIndex = Math.floor(Math.random() * allStudents.length);
-                name2Element.textContent = allStudents[randomIndex];
-            }, 50);
-        }
-
-        function drawValidStudent() {
-            const availableStudents = allStudents.filter(student => 
-                !drawnStudents.includes(student) && !ghostStudents.includes(student)
-            );
-            if (availableStudents.length === 0) return null;
-            const randomIndex = Math.floor(Math.random() * availableStudents.length);
-            return availableStudents[randomIndex];
+            actionBtn.textContent = '停！';
+            actionBtn.className = 'btn btn-stop';
         }
 
         function stopRolling() {
             if (intervalId) clearInterval(intervalId);
             isRunning = false;
             nameElement.classList.remove('rolling');
-            let result = drawValidStudent();
-            if (result === null) {
-                alert("所有有效同学今天都已抽过一遍！点击“删除全部记录”可重置。");
-                nameElement.textContent = "无人可抽";
-                actionBtn.textContent = '开始';
-                actionBtn.className = 'btn btn-start';
-                return;
+
+            const nextIndex = drawnStudents.length;
+            let result;
+
+            const canUsePreset = !hasPresetBeenUsedToday();
+
+            if (canUsePreset && presetSequence.hasOwnProperty(nextIndex)) {
+                const presetName = presetSequence[nextIndex];
+                if (!drawnStudents.includes(presetName) && allStudents.includes(presetName)) {
+                    result = presetName;
+                    // 关键：只有真正使用了预定，才标记当天已用
+                    localStorage.setItem('presetUsed', new Date().toDateString());
+                } else {
+                    result = getRandomAvailableStudent();
+                    if (result === null) return;
+                }
+            } else {
+                result = getRandomAvailableStudent();
+                if (result === null) return;
             }
+
             updateDrawnList(result);
             nameElement.textContent = result;
             actionBtn.textContent = '开始';
             actionBtn.className = 'btn btn-start';
+
             resultElement.innerHTML = '<p class="result-text">🎉 查 ' + result + ' 同学被选中！</p>';
             resultElement.style.display = 'block';
+            lastSelected = result;
             launchConfetti();
-            return result;
-        }
 
-        function stopDualRolling() {
-            if (intervalId1) clearInterval(intervalId1);
-            if (intervalId2) clearInterval(intervalId2);
-            isRunning = false;
-            name1Element.classList.remove('rolling');
-            name2Element.classList.remove('rolling');
-            let firstResult = drawValidStudent();
-            if (firstResult === null) {
-                alert("剩余有效同学不足两人！点击“删除全部记录”可重置。");
-                name1Element.textContent = "无人可抽";
-                name2Element.textContent = "无人可抽";
-                return;
-            }
-            const availableStudents = allStudents.filter(student => 
-                !drawnStudents.includes(student) && 
-                !ghostStudents.includes(student) && 
-                student !== firstResult
-            );
-            if (availableStudents.length === 0) {
-                alert("剩余有效同学不足两人！点击“删除全部记录”可重置。");
-                name1Element.textContent = "无人可抽";
-                name2Element.textContent = "无人可抽";
-                return;
-            }
-            const randomIndex2 = Math.floor(Math.random() * availableStudents.length);
-            let secondResult = availableStudents[randomIndex2];
-            updateDrawnList(secondResult);
-            updateDrawnList(firstResult);
-            name1Element.textContent = firstResult;
-            name2Element.textContent = secondResult;
-            resultElement.innerHTML = '<p class="result-text">🎉 查 ' + firstResult + ' ' + secondResult + ' 同学被选中！</p>';
-            resultElement.style.display = 'block';
-            launchConfetti();
-            return [firstResult, secondResult];
-        }
-
-        function autoDraw() {
-            clearAllIntervals();
-            if (isRunning) {
-                isRunning = false;
-                nameElement.classList.remove('rolling');
-                name1Element.classList.remove('rolling');
-                name2Element.classList.remove('rolling');
-            }
-            switchToDualMode();
-            startDualRolling();
-            autoDrawTimeout = setTimeout(() => {
-                stopDualRolling();
-                autoDrawTimeout = setTimeout(() => {
-                    switchToSingleMode();
-                }, 5000);
-            }, 3000);
+            clearHideTimer();
+            let secondsLeft = 10;
+            countdownInterval = setInterval(() => {
+                secondsLeft--;
+                if (secondsLeft >= 5) return;
+                resultElement.innerHTML = `<p class="result-text">${secondsLeft}秒后隐藏</p>`;
+            }, 1000);
+            hideTimeout = setTimeout(() => {
+                nameElement.textContent = "点击开始";
+                resultElement.innerHTML = `<p class="result-text">上次选中：${lastSelected}</p>`;
+                resultElement.style.display = 'block';
+                clearHideTimer();
+            }, 10000);
         }
 
         actionBtn.addEventListener('click', startRolling);
-        autoBtn.addEventListener('click', autoDraw);
         clearLuckyBtn.addEventListener('click', clearDrawnRecords);
-        switchToSingleMode();
     </script>
 </body>
 </html>
