@@ -91,16 +91,6 @@
             position: relative;
             overflow: hidden;
         }
-        @keyframes fadeInScale {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
         .name {
             font-size: 3.8rem;
             font-weight: 700;
@@ -218,7 +208,6 @@
             justify-content: center;
             gap: 8px;
         }
-        /* ===== 修改后的游戏按钮（使用原 auto-btn 配色） ===== */
         .game-btn {
             position: fixed;
             bottom: 40px;
@@ -458,9 +447,7 @@
         <button id="actionBtn" class="btn btn-start initial">开始</button>
         <div id="result" class="result" style="display: none;"></div>
     </div>
-    <!-- 修改后的游戏按钮 -->
     <a href="https://lt.sycz.eu.org/loading.html" class="game-btn">打开游戏抽奖机</a>
-    <!-- 更新日志 -->
     <div class="changelog">
         <h4>更新日志</h4>
         <p>• 删除自动二连抽</p>
@@ -483,30 +470,12 @@
             "杨珂权", "华伟琦", "周嘉磊", "何名浩", "陈优璇", "陈忆慧", "李霞康", "翟政炜", "卞苏晨", "潘闫宇",
             "方振兴", "李家宇", "潘佳琦", "张丹晨", "严翰知", "陈奥", "程煜扬", "李思业", "李子钰", "钱涅囷",
             "刘明镪", "李奕彤", "陈思月", "俞晓宇", "王致远", "曹心晨", "丁子迁", "邓承希", "周嘉鑫",
-            "黄周逸凡", "曹梓杨", "戴逸瑄", "李俊熙", "夏思宇", "黄稼明", "钱浩泽", "钱泽一"
+            "黄周逸凡", "曹梓杨", "戴逸瑄", "李俊熙", "夏思宇", "黄稼明", "钱浩泽", "钱泽一", "孙嘉辰"
         ];
 
-        // === 预设抽取顺序（第1、2、4次）===
-        const presetOrder = {
-            1: "陈宇浩",
-            2: "孙嘉辰",
-            4: "申弈涵"
-        };
-
-        // 确保孙嘉辰在名单中
-        if (!allStudents.includes("孙嘉辰")) {
-            allStudents.push("孙嘉辰");
-        }
-
-        // 黑名单（原 ghostStudents）
-        const ghostStudents = ["杨珂权", "邹辰昱", "王致远", "黄稼明"];
-
         let drawnStudents = [];
-        let drawCount = 0; // 当天抽取次数（仅单抽）
         let isRunning = false;
         let intervalId = null;
-
-        // 倒计时控制
         let hideTimeout = null;
         let countdownInterval = null;
         let lastSelected = null;
@@ -588,7 +557,6 @@
         }
 
         function updateDrawnList(name) {
-            // 预设同学也会加入幸运儿列表
             const listItem = document.createElement('div');
             listItem.className = 'lucky-item';
             listItem.textContent = name;
@@ -598,8 +566,6 @@
         }
 
         function clearDrawnRecords() {
-            // 清除记录，但不清除 drawCount（防止当天重复预设）
-            // 实际上，drawCount 是内存变量，刷新页面会重置，符合“每天重置”需求
             drawnStudents = [];
             luckyListElement.innerHTML = '';
             saveDrawnStudentsToStorage();
@@ -677,7 +643,7 @@
             intervalId = setInterval(() => {
                 const randomIndex = Math.floor(Math.random() * allStudents.length);
                 nameElement.textContent = allStudents[randomIndex];
-            }, 64);
+            }, 50);
             actionBtn.textContent = '停！';
             actionBtn.className = 'btn btn-stop';
         }
@@ -687,59 +653,30 @@
             isRunning = false;
             nameElement.classList.remove('rolling');
 
-            drawCount++; // 抽取次数 +1
-
-            let result = null;
-            // 检查是否命中预设顺序
-            if (presetOrder.hasOwnProperty(drawCount)) {
-                result = presetOrder[drawCount];
-                // 确保预设同学不在黑名单且未被抽过
-                if (ghostStudents.includes(result) || drawnStudents.includes(result)) {
-                    // 理论上不会发生，但安全处理：回退到随机
-                    const available = allStudents.filter(s =>
-                        !ghostStudents.includes(s) && !drawnStudents.includes(s)
-                    );
-                    if (available.length > 0) {
-                        result = available[Math.floor(Math.random() * available.length)];
-                    } else {
-                        alert("无可抽同学！");
-                        nameElement.textContent = "无人可抽";
-                        actionBtn.textContent = '开始';
-                        actionBtn.className = 'btn btn-start';
-                        return;
-                    }
-                }
-            } else {
-                // 正常随机抽取
-                const available = allStudents.filter(s =>
-                    !ghostStudents.includes(s) && !drawnStudents.includes(s)
-                );
-                if (available.length === 0) {
-                    alert("所有有效同学今天都已抽过一遍！");
-                    nameElement.textContent = "无人可抽";
-                    actionBtn.textContent = '开始';
-                    actionBtn.className = 'btn btn-start';
-                    return;
-                }
-                result = available[Math.floor(Math.random() * available.length)];
+            const availableStudents = allStudents.filter(student => !drawnStudents.includes(student));
+            if (availableStudents.length === 0) {
+                alert("所有同学今天都已抽过一遍！点击“删除全部记录”可重置。");
+                nameElement.textContent = "无人可抽";
+                actionBtn.textContent = '开始';
+                actionBtn.className = 'btn btn-start';
+                return;
             }
 
-            // 显示结果
+            const randomIndex = Math.floor(Math.random() * availableStudents.length);
+            const result = availableStudents[randomIndex];
+            updateDrawnList(result);
             nameElement.textContent = result;
             actionBtn.textContent = '开始';
             actionBtn.className = 'btn btn-start';
 
-            // 加入幸运儿列表（包括预设同学）
-            updateDrawnList(result);
-
-            resultElement.innerHTML = `<p class="result-text">🎉 查 ${result} 同学被选中！</p>`;
+            resultElement.innerHTML = '<p class="result-text">🎉 查 ' + result + ' 同学被选中！</p>';
             resultElement.style.display = 'block';
             lastSelected = result;
 
             launchConfetti();
 
-            // 启动 10 秒隐藏逻辑
             clearHideTimer();
+
             let secondsLeft = 10;
             countdownInterval = setInterval(() => {
                 secondsLeft--;
