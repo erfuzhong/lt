@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>起飞打卡记录</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            height: calc(100vh - 40px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content {
+            display: flex;
+            gap: 24px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .left-panel {
+            width: 280px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.2);
+        }
+
+        .stat-value {
+            font-size: 2.8rem;
+            font-weight: bold;
+            margin-bottom: 6px;
+            background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .stat-change {
+            margin-top: 8px;
+            font-size: 0.85rem;
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .stat-change.up {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+        }
+
+        .stat-change.down {
+            background: rgba(255, 68, 68, 0.2);
+            color: #ff4444;
+        }
+
+        .stat-change.neutral {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .right-panel {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .calendar {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-shrink: 0;
+        }
+
+        .month-nav {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.4rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: rgba(0, 212, 255, 0.3);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .current-month {
+            font-size: 1.6rem;
+            font-weight: 600;
+            min-width: 160px;
+            text-align: center;
+        }
+
+        .weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-shrink: 0;
+        }
+
+        .weekday {
+            text-align: center;
+            padding: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            flex: 1;
+        }
+
+        .day {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.03);
+            position: relative;
+            min-height: 70px;
+        }
+
+        .day:hover:not(.disabled):not(.empty) {
+            background: rgba(0, 212, 255, 0.2);
+            transform: scale(1.03);
+        }
+
+        .day.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .day.empty {
+            background: transparent;
+            cursor: default;
+        }
+
+        .day.today {
+            border: 3px solid #00d4ff;
+        }
+
+        .day.checked {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(123, 44, 191, 0.2));
+        }
+
+        .day.multi-checked {
+            background: linear-gradient(135deg, rgba(0, 180, 255, 0.4), rgba(0, 212, 255, 0.5));
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4), inset 0 0 15px rgba(0, 212, 255, 0.2);
+        }
+
+        .day-number {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .check-count {
+            font-size: 0.85rem;
+            color: #00d4ff;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .day.multi-checked .check-count {
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.8);
+        }
+
+        .plane-icon {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            font-size: 1rem;
+        }
+
+        .day.multi-checked .plane-icon {
+            font-size: 1.1rem;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+            flex-shrink: 0;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .legend-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        .legend-dot.checked {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.4), rgba(123, 44, 191, 0.4));
+        }
+
+        .legend-dot.multi-checked {
+            background: linear-gradient(135deg, rgba(0, 180, 255, 0.6), rgba(0, 212, 255, 0.7));
+            box-shadow: 0 0 8px rgba(0, 212, 255, 0.5);
+        }
+
+        .legend-dot.today {
+            border: 2px solid #00d4ff;
+            background: transparent;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 20px;
+            padding: 32px;
+            max-width: 420px;
+            width: 90%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .modal h2 {
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.5rem;
+        }
+
+        .modal-date {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 24px;
+            font-size: 1.1rem;
+        }
+
+        .modal-count {
+            text-align: center;
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 24px;
+            background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            padding: 14px 36px;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .modal-btn.primary {
+            background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+            color: #fff;
+        }
+
+        .modal-btn.primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .modal-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .modal-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-btn.danger {
+            background: rgba(255, 68, 68, 0.2);
+            color: #ff4444;
+        }
+
+        .modal-btn.danger:hover {
+            background: rgba(255, 68, 68, 0.3);
+        }
+
+        .modal-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        @media (max-height: 700px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                height: calc(100vh - 20px);
+            }
+            
+            .left-panel {
+                width: 240px;
+            }
+            
+            .stat-card {
+                padding: 14px;
+            }
+            
+            .stat-value {
+                font-size: 2.2rem;
+            }
+            
+            .calendar {
+                padding: 14px;
+            }
+            
+            .day {
+                min-height: 55px;
+            }
+            
+            .day-number {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .left-panel {
+                width: 100%;
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            
+            .stat-card {
+                flex: 1;
+                min-width: 140px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="main-content">
+            <div class="left-panel">
+                <div class="stat-card">
+                    <div class="stat-value" id="monthDays">0</div>
+                    <div class="stat-label">本月起飞天数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="monthRate">0%</div>
+                    <div class="stat-label">本月起飞率</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="monthCount">0</div>
+                    <div class="stat-label">本月起飞次数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="changeRate">-</div>
+                    <div class="stat-label">起飞次数相比上月变化率</div>
+                    <div class="stat-change neutral" id="changeIndicator">暂无数据</div>
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <div class="calendar">
+                    <div class="calendar-header">
+                        <div class="month-nav">
+                            <button class="nav-btn" id="prevMonth">‹</button>
+                            <span class="current-month" id="currentMonth"></span>
+                            <button class="nav-btn" id="nextMonth">›</button>
+                        </div>
+                    </div>
+
+                    <div class="weekdays">
+                        <div class="weekday">日</div>
+                        <div class="weekday">一</div>
+                        <div class="weekday">二</div>
+                        <div class="weekday">三</div>
+                        <div class="weekday">四</div>
+                        <div class="weekday">五</div>
+                        <div class="weekday">六</div>
+                    </div>
+
+                    <div class="days" id="calendarDays"></div>
+
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-dot today"></div>
+                            <span>今天</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot checked"></div>
+                            <span>已起飞</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot multi-checked"></div>
+                            <span>多次起飞</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <h2>✈️ 起飞记录</h2>
+            <div class="modal-date" id="modalDate"></div>
+            <div class="modal-count" id="modalCount">0 次</div>
+            <div class="modal-buttons">
+                <button class="modal-btn danger" id="decreaseBtn">-1</button>
+                <button class="modal-btn primary" id="increaseBtn">+1 起飞</button>
+                <button class="modal-btn secondary" id="closeModal">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'takeoff_records';
+        const START_DATE = new Date(2024, 11, 1);
+
+        let currentYear = 2024;
+        let currentMonth = 11;
+        let selectedDate = null;
+
+        function getRecords() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            return data ? JSON.parse(data) : {};
+        }
+
+        function saveRecords(records) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+        }
+
+        function getDayRecord(dateKey) {
+            const records = getRecords();
+            return records[dateKey] || 0;
+        }
+
+        function setDayRecord(dateKey, count) {
+            const records = getRecords();
+            if (count <= 0) {
+                delete records[dateKey];
+            } else {
+                records[dateKey] = count;
+            }
+            saveRecords(records);
+        }
+
+        function getDateKey(year, month, day) {
+            return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        }
+
+        function getDaysInMonth(year, month) {
+            return new Date(year, month + 1, 0).getDate();
+        }
+
+        function getFirstDayOfMonth(year, month) {
+            return new Date(year, month, 1).getDay();
+        }
+
+        function isDateValid(year, month, day) {
+            const date = new Date(year, month, day);
+            const today = new Date();
+            today.setHours(23, 59, 59, 999);
+            return date >= START_DATE && date <= today;
+        }
+
+        function isToday(year, month, day) {
+            const today = new Date();
+            return year === today.getFullYear() && 
+                   month === today.getMonth() && 
+                   day === today.getDate();
+        }
+
+        function renderCalendar() {
+            const daysContainer = document.getElementById('calendarDays');
+            const currentMonthEl = document.getElementById('currentMonth');
+            
+            currentMonthEl.textContent = `${currentYear}年${currentMonth + 1}月`;
+            
+            const daysInMonth = getDaysInMonth(currentYear, currentMonth);
+            const firstDay = getFirstDayOfMonth(currentYear, currentMonth);
+            
+            let html = '';
+            
+            for (let i = 0; i < firstDay; i++) {
+                html += '<div class="day empty"></div>';
+            }
+            
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateKey = getDateKey(currentYear, currentMonth, day);
+                const count = getDayRecord(dateKey);
+                const valid = isDateValid(currentYear, currentMonth, day);
+                const today = isToday(currentYear, currentMonth, day);
+                
+                let classes = 'day';
+                if (!valid) classes += ' disabled';
+                if (today) classes += ' today';
+                if (count > 0) {
+                    classes += count >= 2 ? ' multi-checked' : ' checked';
+                }
+                
+                html += `
+                    <div class="${classes}" data-day="${day}">
+                        ${count > 0 ? '<span class="plane-icon">✈️</span>' : ''}
+                        <span class="day-number">${day}</span>
+                        ${count > 0 ? `<span class="check-count">${count}次</span>` : ''}
+                    </div>
+                `;
+            }
+            
+            daysContainer.innerHTML = html;
+            
+            daysContainer.querySelectorAll('.day:not(.disabled):not(.empty)').forEach(dayEl => {
+                dayEl.addEventListener('click', () => {
+                    const day = parseInt(dayEl.dataset.day);
+                    openModal(currentYear, currentMonth, day);
+                });
+            });
+            
+            updateNavButtons();
+            updateStats();
+        }
+
+        function updateNavButtons() {
+            const prevBtn = document.getElementById('prevMonth');
+            const nextBtn = document.getElementById('nextMonth');
+            const today = new Date();
+            
+            prevBtn.disabled = currentYear === 2024 && currentMonth === 11;
+            nextBtn.disabled = currentYear === today.getFullYear() && currentMonth === today.getMonth();
+        }
+
+        function getMonthStats(year, month) {
+            const records = getRecords();
+            const daysInMonth = getDaysInMonth(year, month);
+            const today = new Date();
+            
+            let totalDays = 0;
+            let totalCount = 0;
+            let validDays = 0;
+            
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateKey = getDateKey(year, month, day);
+                const date = new Date(year, month, day);
+                
+                if (date >= START_DATE && date <= today) {
+                    validDays++;
+                    const count = records[dateKey] || 0;
+                    if (count > 0) {
+                        totalDays++;
+                        totalCount += count;
+                    }
+                }
+            }
+            
+            return { totalDays, totalCount, validDays };
+        }
+
+        function updateStats() {
+            const currentStats = getMonthStats(currentYear, currentMonth);
+            
+            document.getElementById('monthDays').textContent = currentStats.totalDays;
+            document.getElementById('monthCount').textContent = currentStats.totalCount;
+            
+            const rate = currentStats.validDays > 0 
+                ? Math.round((currentStats.totalDays / currentStats.validDays) * 100) 
+                : 0;
+            document.getElementById('monthRate').textContent = rate + '%';
+            
+            let prevYear = currentYear;
+            let prevMonth = currentMonth - 1;
+            if (prevMonth < 0) {
+                prevMonth = 11;
+                prevYear--;
+            }
+            
+            if (prevYear > 2024 || (prevYear === 2024 && prevMonth >= 11)) {
+                const prevStats = getMonthStats(prevYear, prevMonth);
+                const changeRateEl = document.getElementById('changeRate');
+                const changeIndicator = document.getElementById('changeIndicator');
+                
+                if (prevStats.totalCount > 0) {
+                    const change = ((currentStats.totalCount - prevStats.totalCount) / prevStats.totalCount * 100).toFixed(1);
+                    if (change > 0) {
+                        changeRateEl.textContent = '+' + change + '%';
+                        changeIndicator.textContent = '↑ 上升';
+                        changeIndicator.className = 'stat-change up';
+                    } else if (change < 0) {
+                        changeRateEl.textContent = change + '%';
+                        changeIndicator.textContent = '↓ 下降';
+                        changeIndicator.className = 'stat-change down';
+                    } else {
+                        changeRateEl.textContent = '0%';
+                        changeIndicator.textContent = '持平';
+                        changeIndicator.className = 'stat-change neutral';
+                    }
+                } else {
+                    document.getElementById('changeRate').textContent = '-';
+                    changeIndicator.textContent = '上月无数据';
+                    changeIndicator.className = 'stat-change neutral';
+                }
+            } else {
+                document.getElementById('changeRate').textContent = '-';
+                document.getElementById('changeIndicator').textContent = '暂无上月数据';
+                document.getElementById('changeIndicator').className = 'stat-change neutral';
+            }
+        }
+
+        function openModal(year, month, day) {
+            selectedDate = { year, month, day };
+            const dateKey = getDateKey(year, month, day);
+            const count = getDayRecord(dateKey);
+            
+            document.getElementById('modalDate').textContent = `${year}年${month + 1}月${day}日`;
+            document.getElementById('modalCount').textContent = count + ' 次';
+            document.getElementById('modalOverlay').classList.add('active');
+            
+            updateDecreaseButton(count);
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            selectedDate = null;
+        }
+
+        function updateDecreaseButton(count) {
+            const decreaseBtn = document.getElementById('decreaseBtn');
+            decreaseBtn.disabled = count <= 0;
+        }
+
+        function increaseRecord() {
+            if (!selectedDate) return;
+            const { year, month, day } = selectedDate;
+            const dateKey = getDateKey(year, month, day);
+            const newCount = getDayRecord(dateKey) + 1;
+            setDayRecord(dateKey, newCount);
+            document.getElementById('modalCount').textContent = newCount + ' 次';
+            updateDecreaseButton(newCount);
+            renderCalendar();
+        }
+
+        function decreaseRecord() {
+            if (!selectedDate) return;
+            const { year, month, day } = selectedDate;
+            const dateKey = getDateKey(year, month, day);
+            const currentCount = getDayRecord(dateKey);
+            if (currentCount > 0) {
+                const newCount = currentCount - 1;
+                setDayRecord(dateKey, newCount);
+                document.getElementById('modalCount').textContent = newCount + ' 次';
+                updateDecreaseButton(newCount);
+                renderCalendar();
+            }
+        }
+
+        document.getElementById('prevMonth').addEventListener('click', () => {
+            if (currentYear === 2024 && currentMonth === 11) return;
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            renderCalendar();
+        });
+
+        document.getElementById('nextMonth').addEventListener('click', () => {
+            const today = new Date();
+            if (currentYear === today.getFullYear() && currentMonth === today.getMonth()) return;
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            renderCalendar();
+        });
+
+        document.getElementById('closeModal').addEventListener('click', closeModal);
+        document.getElementById('modalOverlay').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeModal();
+        });
+        document.getElementById('increaseBtn').addEventListener('click', increaseRecord);
+        document.getElementById('decreaseBtn').addEventListener('click', decreaseRecord);
+
+        const today = new Date();
+        currentYear = today.getFullYear();
+        currentMonth = today.getMonth();
+
+        if (currentYear < 2024 || (currentYear === 2024 && currentMonth < 11)) {
+            currentYear = 2024;
+            currentMonth = 11;
+        }
+
+        renderCalendar();
+    </script>
+</body>
+</html>
