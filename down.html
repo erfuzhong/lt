@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>第91组内部文件下载中心</title>
+<style>
+  /* 基础样式重置 */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "PingFang SC", "Microsoft YaHei", -apple-system,
+      BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+
+  body {
+    background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+    min-height: 100vh;
+    color: #333;
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* 标题外层圆角矩形框，增加开场动画 */
+  .page-header-box {
+    width: 1100px;
+    max-width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 22px 30px;
+    margin-bottom: 50px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+    
+    /* 新增：开场动画 */
+    animation: fadeInDown 0.8s ease forwards;
+  }
+
+  .page-header-box:hover {
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+    transform: translateY(-3px);
+  }
+
+  .page-header h1 {
+    color: #1a237e;
+    /* 缩小字体 */
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-shadow: none;
+    user-select: none;
+  }
+
+  .grid-layout {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+  }
+
+  .section-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    animation: fadeInUp 0.8s ease backwards;
+  }
+
+  .section-card:nth-child(2) {
+    animation-delay: 0.15s;
+  }
+
+  .section-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+  }
+
+  .section-title {
+    font-size: 1.3rem;
+    color: #1a237e;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px dashed #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+  }
+
+  .file-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    border: 1px solid #f1f5f9;
+    transition: all 0.2s ease;
+  }
+
+  .file-item:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: scale(1.01);
+  }
+
+  .file-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    overflow: hidden;
+  }
+
+  .file-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8fafc;
+    flex-shrink: 0;
+  }
+
+  .file-name {
+    font-size: 1rem;
+    color: #334155;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+  }
+
+  .download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(79, 172, 254, 0.3);
+    flex-shrink: 0;
+  }
+
+  .download-btn:hover {
+    box-shadow: 0 6px 15px rgba(79, 172, 254, 0.5);
+    transform: translateY(-2px);
+  }
+
+  .download-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+  }
+
+  .icon-svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+  }
+
+  @media (max-width: 850px) {
+    .grid-layout {
+      grid-template-columns: 1fr;
+    }
+    .page-header-box {
+      width: 100%;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+    .page-header h1 {
+      font-size: 1.5rem;
+    }
+    .container {
+      padding: 0 10px;
+    }
+  }
+
+  /* 开场淡入下滑动画 */
+  @keyframes fadeInDown {
+    0% {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="page-header-box">
+      <div class="page-header">
+        <h1>第91小组内部文件下载中心</h1>
+      </div>
+    </div>
+
+    <div class="grid-layout">
+      <!-- 这里保留之前的区块代码，示例省略 -->
+      <!-- 第91小组研究性学习 -->
+      <div class="section-card">
+        <h2 class="section-title">
+          <svg class="icon-svg" viewBox="0 0 24 24">
+            <path
+              d="M20 6H12L10 4H4C2.9 4 2.01 4.9 2.01 6L2 18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V8C22 6.9 21.1 6 20 6ZM20 18H4V8H20V18Z"
+            />
+          </svg>
+          第91小组研究性学习
+        </h2>
+        <div class="file-list">
+          <!-- 文件示例 -->
+          <div class="file-item">
+            <div class="file-info">
+              <div class="file-icon" style="color: #f44336">
+                <svg class="icon-svg" viewBox="0 0 24 24">
+                  <path
+                    d="M14 2H6C4.89 2 4 2.9 4 4V20C4 21.1 4.89 22 6 22H18C19.1 22 20 21.1 20 20V8L14 2ZM13 9V3.5L18.5 9H13Z"
+                  />
+                </svg>
+              </div>
+              <span class="file-name">开题报告(终版).pdf</span>
+            </div>
+            <a href="https://your-oss-link.com/file1.pdf" class="download-btn" target="_blank">
+              <svg viewBox="0 0 24 24">
+                <path d="M5 20H19V18H5M19 9H15V3H9V9H5L12 16L19 9Z" />
+              </svg>
+              下载
+            </a>
+          </div>
+          <!-- 其它文件略 -->
+        </div>
+      </div>
+
+      <!-- 潘YY的文件 -->
+      <div class="section-card">
+        <h2 class="section-title">
+          <svg class="icon-svg" viewBox="0 0 24 24">
+            <path
+              d="M20 6H12L10 4H4C2.9 4 2.01 4.9 2.01 6L2 18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V8C22 6.9 21.1 6 20 6ZM20 18H4V8H20V18Z"
+            />
+          </svg>
+          潘YY的文件
+        </h2>
+        <div class="file-list">
+          <!-- 文件示例 -->
+          <div class="file-item">
+            <div class="file-info">
+              <div class="file-icon" style="color: #2196f3">
+                <svg class="icon-svg" viewBox="0 0 24 24">
+                  <path
+                    d="M14 2H6C4.89 2 4 2.9 4 4V20C4 21.1 4.89 22 6 22H18C19.1 22 20 21.1 20 20V8L14 2ZM13 9V3.5L18.5 9H13Z"
+                  />
+                </svg>
+              </div>
+              <span class="file-name">个人简历_2023.pdf</span>
+            </div>
+            <a href="https://your-oss-link.com/pyy_resume.pdf" class="download-btn" target="_blank">
+              <svg viewBox="0 0 24 24">
+                <path d="M5 20H19V18H5M19 9H15V3H9V9H5L12 16L19 9Z" />
+              </svg>
+              下载
+            </a>
+          </div>
+          <!-- 其它文件略 -->
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
