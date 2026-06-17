@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>点名机 V8.5</title>
+    <title>点名机 V9.0</title>
     <style>
         * {
             box-sizing: border-box;
@@ -12,8 +12,7 @@
             margin: 0;
             padding: 0;
             min-height: 100vh;
-            background: #e3f2fd;
-            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 50%, #e3f2fd 100%);
+            background: linear-gradient(135deg, #0071e3 0%, #34aadc 30%, #4cd964 60%, #ffcc00 80%, #ff9500 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -25,10 +24,10 @@
             overflow-x: hidden;
         }
         .container {
-            background: rgba(255, 255, 255, 0.98);
+            background: rgba(255, 255, 255, 0.95);
             border-radius: 24px;
-            box-shadow: 0 8px 32px rgba(33, 150, 243, 0.08), 
-                        0 2px 8px rgba(33, 150, 243, 0.04);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2), 
+                        0 2px 8px rgba(31, 38, 135, 0.1);
             padding: 20px 24px;
             width: 100%;
             max-width: 420px;
@@ -38,14 +37,14 @@
         h1 {
             font-size: 2.7rem;
             font-weight: 700;
-            color: #1976d2;
+            color: #1d1d1f;
             margin: 0 0 4px 0;
             line-height: 1.1;
             letter-spacing: -0.02em;
         }
         .subtitle {
             font-size: 1.2rem;
-            color: #546e7a;
+            color: #333;
             margin: 0 0 16px 0;
             line-height: 1.3;
             font-weight: 400;
@@ -57,17 +56,17 @@
             justify-content: center;
             margin: 16px 0;
             padding: 0 20px;
-            background: #bbdefb;
+            background: linear-gradient(135deg, #0071e3, #34aadc);
             border-radius: 20px;
-            border: 1px solid rgba(33, 150, 243, 0.3);
-            box-shadow: inset 0 2px 4px rgba(33, 150, 243, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.2), 0 4px 12px rgba(0, 113, 227, 0.3);
             position: relative;
             overflow: hidden;
         }
         .name {
             font-size: 3.8rem;
             font-weight: 700;
-            color: #1976d2;
+            color: white;
             min-height: 4rem;
             line-height: 1.0;
             letter-spacing: -0.03em;
@@ -112,46 +111,46 @@
             left: 100%;
         }
         .btn-start {
-            background: linear-gradient(135deg, #2196f3, #1976d2);
+            background: linear-gradient(135deg, #30d158, #32d74b);
             color: white;
         }
         .btn-start.initial {
         }
         .btn-start:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(33, 150, 243, 0.4);
+            box-shadow: 0 8px 24px rgba(48, 209, 88, 0.4);
         }
         .btn-start:active {
             transform: translateY(0);
-            box-shadow: 0 4px 16px rgba(33, 150, 243, 0.3);
+            box-shadow: 0 4px 16px rgba(48, 209, 88, 0.3);
         }
         .btn-stop {
-            background: linear-gradient(135deg, #1565c0, #0d47a1);
+            background: linear-gradient(135deg, #ff453a, #ff3b30);
             color: white;
         }
         .btn-stop:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(21, 101, 192, 0.4);
+            box-shadow: 0 8px 24px rgba(255, 69, 58, 0.4);
         }
         .btn-stop:active {
             transform: translateY(0);
-            box-shadow: 0 4px 16px rgba(21, 101, 192, 0.3);
+            box-shadow: 0 4px 16px rgba(255, 69, 58, 0.3);
         }
         .result {
             margin: 12px 0 0 0;
             padding: 14px;
-            background: #bbdefb;
+            background: linear-gradient(135deg, #0071e3, #34aadc);
             border-radius: 16px;
-            border: 1px solid rgba(33, 150, 243, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.4);
             font-size: 1.3rem;
-            box-shadow: 0 2px 8px rgba(33, 150, 243, 0.2);
+            box-shadow: 0 2px 8px rgba(0, 113, 227, 0.3);
             position: relative;
             z-index: 2;
         }
         .result-text {
             font-size: 1.35rem;
             font-weight: 700;
-            color: #1976d2;
+            color: white;
             margin: 0;
             line-height: 1.2;
             display: flex;
@@ -170,20 +169,20 @@
             border-radius: 16px;
             font-size: 1.2rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #64b5f6, #42a5f5);
-            color: #0d47a1;
+            background: linear-gradient(135deg, #30d158, #32d74b);
+            color: white;
             text-decoration: none;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 8px 24px rgba(100, 181, 246, 0.4);
+            box-shadow: 0 8px 24px rgba(48, 209, 88, 0.4);
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             z-index: 100;
             font-family: "Microsoft YaHei", "Segoe UI", Tahoma, Arial, sans-serif;
         }
         .game-btn:hover {
             transform: translateY(-4px);
-            box-shadow: 0 12px 32px rgba(100, 181, 246, 0.5);
+            box-shadow: 0 12px 32px rgba(48, 209, 88, 0.5);
         }
         .game-btn:active {
             transform: translateY(-2px);
@@ -193,24 +192,24 @@
             position: fixed;
             bottom: 40px;
             left: 40px;
-            background: rgba(255, 255, 255, 0.98);
+            background: rgba(255, 255, 255, 0.95);
             width: 250px;
             border-radius: 16px;
             padding: 14px 18px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
             font-size: 1.05rem;
-            color: #546e7a;
+            color: #333;
             line-height: 1.4;
             z-index: 99;
-            border: 1px solid rgba(100, 181, 246, 0.2);
+            border: 1px solid rgba(31, 38, 135, 0.1);
         }
         .changelog h4 {
             font-size: 1.15rem;
             font-weight: 700;
-            color: #0d47a1;
+            color: #1d1d1f;
             margin: 0 0 8px 0;
             padding-bottom: 6px;
-            border-bottom: 2px solid #64b5f6;
+            border-bottom: 2px solid #0071e3;
         }
         .changelog p {
             margin: 4px 0;
@@ -230,24 +229,24 @@
             position: fixed;
             top: 40px;
             right: 40px;
-            background: rgba(255, 255, 255, 0.98);
+            background: rgba(255, 255, 255, 0.95);
             width: 250px;
             border-radius: 16px;
             padding: 14px 18px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
             font-size: 1.05rem;
-            color: #546e7a;
+            color: #333;
             line-height: 1.4;
             z-index: 99;
-            border: 1px solid rgba(100, 181, 246, 0.2);
+            border: 1px solid rgba(31, 38, 135, 0.1);
         }
         .lucky-container h4 {
             font-size: 1.15rem;
             font-weight: 700;
-            color: #0d47a1;
+            color: #1d1d1f;
             margin: 0 0 8px 0;
             padding-bottom: 6px;
-            border-bottom: 2px solid #64b5f6;
+            border-bottom: 2px solid #0071e3;
             text-align: left;
         }
         .lucky-list {
@@ -262,16 +261,16 @@
             width: 6px;
         }
         .lucky-list::-webkit-scrollbar-thumb {
-            background-color: #bbdefb;
+            background-color: #0071e3;
             border-radius: 3px;
         }
         .lucky-item {
             margin: 0;
             padding: 4px 6px;
-            background: #bbdefb;
+            background: linear-gradient(135deg, #0071e3, #34aadc);
             border-radius: 8px;
             font-weight: 700;
-            color: #1976d2;
+            color: white;
             font-size: 1.15rem;
             text-align: center;
             white-space: nowrap;
@@ -285,16 +284,16 @@
             border-radius: 8px;
             font-size: 1.05rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #64b5f6, #42a5f5);
-            color: #0d47a1;
+            background: linear-gradient(135deg, #ff453a, #ff3b30);
+            color: white;
             border: none;
             cursor: pointer;
             transition: all 0.2s ease;
-            box-shadow: 0 2px 6px rgba(100, 181, 246, 0.4);
+            box-shadow: 0 2px 6px rgba(255, 69, 58, 0.4);
         }
         .clear-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(100, 181, 246, 0.5);
+            box-shadow: 0 4px 8px rgba(255, 69, 58, 0.5);
         }
         .clear-btn:active {
             transform: translateY(0);
@@ -303,40 +302,40 @@
             position: fixed;
             top: 40px;
             left: 40px;
-            background: rgba(255, 255, 255, 0.98);
+            background: rgba(255, 255, 255, 0.95);
             width: 250px;
             border-radius: 16px;
             padding: 14px 18px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
             font-size: 1.05rem;
-            color: #546e7a;
+            color: #333;
             line-height: 1.4;
             z-index: 99;
-            border: 1px solid rgba(100, 181, 246, 0.2);
+            border: 1px solid rgba(31, 38, 135, 0.1);
         }
         .zodiac-container h4 {
             font-size: 1.15rem;
             font-weight: 700;
-            color: #0d47a1;
+            color: #1d1d1f;
             margin: 0 0 8px 0;
             padding-bottom: 6px;
-            border-bottom: 2px solid #64b5f6;
+            border-bottom: 2px solid #0071e3;
             text-align: left;
         }
         .zodiac-content {
             text-align: center;
             font-weight: 700;
-            color: #1976d2;
+            color: white;
             font-size: 1.15rem;
             padding: 8px 0;
-            background: #bbdefb;
+            background: linear-gradient(135deg, #0071e3, #34aadc);
             border-radius: 8px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>点名机 V8.5</h1>
+        <h1>点名机 V9.0</h1>
         <p class="subtitle">高二（1）班 · 57位同学</p>
         <div class="name-display">
             <div id="name" class="name">点击开始</div>
@@ -350,8 +349,9 @@
     
     <div class="changelog">
         <h4>更新日志</h4>
-        <p>• 删除自动二连抽</p>
-        <p>• 添加抽取结果自动隐藏</p>
+        <p>• 升级了网页视觉效果</p>
+        <p>• 游戏抽奖机新增两个舞蹈</p>
+        <p>• 更改为本地存储网页文件以应对校园网限制</p>
     </div>
     <div class="lucky-container">
         <h4>今日幸运儿</h4>
@@ -482,8 +482,8 @@
             canvas.height = window.innerHeight;
             canvas.style.display = 'block';
             const confettiCount = 100;
-            const blueColors = ['#2196f3', '#64b5f6', '#bbdefb', '#1976d2', '#0d47a1', '#e3f2fd', '#42a5f5'];
-            const colorfulColors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#54a0ff', '#5f27cd'];
+            const blueColors = ['#0071e3', '#34aadc', '#4cd964', '#ffcc00', '#ff9500', '#30d158', '#ff453a'];
+            const colorfulColors = ['#0071e3', '#34aadc', '#4cd964', '#ffcc00', '#ff9500', '#30d158', '#ff453a', '#5ac8fa', '#ff2d55'];
             const confettiColors = [...blueColors, ...colorfulColors];
             let confetti = [];
             for (let i = 0; i < confettiCount; i++) {
