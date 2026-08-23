@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LT Minecraft PVP 大赛</title>
+<style>
+  :root{
+    --bg:#0f1420; --panel:#182032; --line:#2a3550; --text:#e8ecf6;
+    --muted:#a5b2cc; --gold:#f5c343; --a:#4f9dff; --b:#ff6b6b; --ok:#3ddc84;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{font-size:18px}
+  body{
+    font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(79,157,255,.10), transparent),
+      radial-gradient(900px 500px at 10% 110%, rgba(245,195,67,.08), transparent),
+      var(--bg);
+    color:var(--text); min-height:100vh; display:flex; flex-direction:column;
+  }
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+  @keyframes popIn{0%{opacity:0;transform:scale(.86)}60%{transform:scale(1.04)}100%{opacity:1;transform:scale(1)}}
+  @keyframes slideL{from{opacity:0;transform:translateX(-26px)}to{opacity:1;transform:none}}
+  @keyframes slideR{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:none}}
+  @keyframes glowPulse{
+    0%,100%{box-shadow:0 0 0 3px rgba(61,220,132,.22), 0 0 26px rgba(61,220,132,.18)}
+    50%{box-shadow:0 0 0 7px rgba(61,220,132,.12), 0 0 40px rgba(61,220,132,.28)}
+  }
+  @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+  @keyframes overlayIn{from{opacity:0}to{opacity:1}}
+  @keyframes modalIn{
+    0%{opacity:0;transform:translateY(30px) scale(.9)}
+    60%{transform:translateY(0) scale(1.03)}
+    100%{opacity:1;transform:translateY(0) scale(1)}
+  }
+
+  header{
+    display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+    padding:16px 24px; border-bottom:1px solid var(--line);
+    background:rgba(19,26,41,.92); backdrop-filter:blur(6px);
+  }
+  h1{font-size:1.55rem; letter-spacing:.5px}
+  h1 span{
+    background:linear-gradient(90deg,var(--gold),#fff2c4,var(--gold));
+    background-size:200% 100%; -webkit-background-clip:text; background-clip:text;
+    -webkit-text-fill-color:transparent; animation:shimmer 5s linear infinite;
+  }
+  .progress{font-size:1rem; color:var(--muted); margin-left:auto}
+  .btn{
+    border:1px solid var(--line); background:#202a40; color:var(--text);
+    padding:11px 20px; border-radius:10px; cursor:pointer; font-size:1rem;
+    transition:transform .15s ease, background .2s ease;
+  }
+  .btn:hover{background:#28344e; transform:translateY(-2px)}
+  .btn:active{transform:translateY(0)}
+  .btn:disabled{opacity:.4; cursor:not-allowed; transform:none}
+  .btn.danger{border-color:#6b2b2b; color:#ff9a9a}
+  .btn.primary{background:var(--gold); color:#20180a; border-color:var(--gold); font-weight:700}
+  .btn.primary:hover{background:#ffd35c}
+
+  .stage{flex:1; display:grid; grid-template-columns:1fr 400px; min-height:0}
+  .arena{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:28px; padding:34px; text-align:center;
+  }
+  .match-title{font-size:1.5rem; font-weight:700; color:var(--gold); letter-spacing:2px; animation:fadeUp .4s ease both}
+  .tag{
+    display:inline-flex; gap:10px; align-items:center; font-size:1.05rem; color:var(--muted);
+    border:1px solid var(--line); padding:9px 20px; border-radius:999px; animation:fadeUp .45s .04s ease both;
+  }
+  .game-name{
+    font-size:clamp(3.4rem,9vw,6.8rem); font-weight:800; letter-spacing:4px; line-height:1.05;
+    animation:popIn .45s cubic-bezier(.22,1.4,.4,1) both;
+  }
+  .series-score{font-size:1.2rem; color:var(--muted); animation:fadeUp .5s .06s ease both}
+  .picks{display:flex; gap:26px; flex-wrap:wrap; justify-content:center; width:100%}
+  .pick{
+    flex:1 1 300px; max-width:400px; min-height:190px;
+    border:2px solid var(--line); border-radius:20px; background:var(--panel);
+    color:var(--text); cursor:pointer; font-size:2.4rem; font-weight:800;
+    display:flex; flex-direction:column; gap:10px; align-items:center; justify-content:center;
+    transition:transform .18s ease, border-color .2s ease, background .2s ease;
+  }
+  .pick small{font-size:.95rem; font-weight:400; color:var(--muted)}
+  .pick.side-a{animation:slideL .45s ease both}
+  .pick.side-b{animation:slideR .45s ease both}
+  .pick:hover{transform:translateY(-6px) scale(1.02); background:#1e2740}
+  .pick.side-a:hover{border-color:var(--a)}
+  .pick.side-b:hover{border-color:var(--b)}
+  .pick.won{border-color:var(--ok); animation:glowPulse 2.4s ease-in-out infinite}
+  .nav{display:flex; gap:12px; flex-wrap:wrap; justify-content:center}
+
+  aside{border-left:1px solid var(--line); background:rgba(19,26,41,.8); padding:20px; overflow:auto}
+  aside h2{font-size:1.15rem; color:var(--gold); margin-bottom:14px}
+  .loot-card{
+    border:1px solid var(--line); border-radius:14px; padding:15px;
+    background:var(--panel); margin-bottom:12px; animation:fadeUp .4s ease both;
+  }
+  .loot-card b{font-size:1.15rem}
+  .loot-card ul{list-style:none; margin-top:10px; display:flex; flex-direction:column; gap:8px}
+  .loot-card li{font-size:1rem; color:#d8dff0; animation:slideL .35s ease both}
+  .loot-card li em{font-style:normal; color:var(--muted); font-size:.9rem}
+  .loot-card .empty{font-size:.95rem; color:var(--muted); margin-top:8px}
+
+  /* ---------- 单场结算弹窗 ---------- */
+  .overlay{
+    position:fixed; inset:0; z-index:50; display:flex; align-items:center; justify-content:center;
+    padding:24px; background:rgba(6,9,16,.78); backdrop-filter:blur(5px);
+    animation:overlayIn .25s ease both;
+  }
+  .modal{
+    width:min(640px,100%); max-height:90vh; overflow:auto; text-align:center;
+    border:2px solid rgba(245,195,67,.5); border-radius:24px; padding:36px 32px;
+    background:linear-gradient(165deg, rgba(245,195,67,.12), rgba(24,32,50,.97));
+    box-shadow:0 30px 80px rgba(0,0,0,.5);
+    animation:modalIn .45s cubic-bezier(.22,1.3,.4,1) both;
+  }
+  .modal .m-stage{font-size:1.05rem; letter-spacing:3px; text-transform:uppercase; color:var(--muted)}
+  .modal .m-match{font-size:1.35rem; color:var(--gold); margin-top:6px; font-weight:700}
+  .modal .m-winner{font-size:clamp(2.6rem,6vw,4rem); font-weight:900; margin:14px 0 6px; color:var(--ok)}
+  .modal .m-score{font-size:1.3rem; color:var(--muted)}
+  .modal .m-games{
+    list-style:none; margin:22px auto 0; max-width:420px;
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .modal .m-games li{
+    display:flex; justify-content:space-between; gap:14px; font-size:1.05rem;
+    border:1px solid var(--line); border-radius:10px; padding:10px 16px; background:rgba(15,20,32,.6);
+  }
+  .modal .m-games li span:last-child{color:var(--ok); font-weight:700}
+  .modal .m-loot{
+    margin-top:22px; border-top:1px solid var(--line); padding-top:20px;
+    font-size:1.15rem; line-height:1.9;
+  }
+  .modal .m-loot b{color:var(--gold)}
+  .modal .m-actions{margin-top:26px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap}
+
+  .results{padding:36px clamp(20px,5vw,64px) 60px; overflow:auto; flex:1}
+  .results h2{font-size:1.7rem; margin:0 0 22px; animation:fadeUp .4s ease both}
+  .podium{display:grid; grid-template-columns:1fr 1fr; gap:26px; margin-bottom:40px}
+  .hero{
+    position:relative; overflow:hidden; border-radius:26px; padding:36px 30px;
+    text-align:center; border:2px solid var(--line); background:var(--panel);
+    animation:popIn .6s cubic-bezier(.22,1.3,.4,1) both;
+  }
+  .hero.champion{
+    border-color:rgba(245,195,67,.65);
+    background:linear-gradient(160deg, rgba(245,195,67,.14), rgba(24,32,50,.9));
+    box-shadow:0 22px 60px rgba(245,195,67,.14);
+  }
+  .hero.loser{
+    border-color:rgba(255,107,107,.5);
+    background:linear-gradient(160deg, rgba(255,107,107,.12), rgba(24,32,50,.9));
+    animation:popIn .6s .12s cubic-bezier(.22,1.3,.4,1) both;
+  }
+  .hero .crest{font-size:3.6rem; display:block; margin-bottom:6px}
+  .hero .label{font-size:1rem; letter-spacing:3px; text-transform:uppercase; color:var(--muted)}
+  .hero .who{font-size:clamp(3rem,7vw,5.4rem); font-weight:900; line-height:1.05; margin:6px 0 4px}
+  .hero.champion .who{
+    background:linear-gradient(90deg,var(--gold),#fff4cf,var(--gold));
+    background-size:200% 100%; -webkit-background-clip:text; background-clip:text;
+    -webkit-text-fill-color:transparent; animation:shimmer 4s linear infinite;
+  }
+  .hero.loser .who{color:#ffb3b3}
+  .hero .award{
+    display:inline-block; margin-top:12px; padding:9px 24px; border-radius:999px;
+    font-size:1.25rem; font-weight:700;
+  }
+  .hero.champion .award{background:rgba(245,195,67,.18); color:var(--gold)}
+  .hero.loser .award{background:rgba(255,107,107,.16); color:#ff9a9a}
+  .hero .rate{font-size:clamp(2.6rem,6vw,4.4rem); font-weight:800; margin-top:16px}
+  .hero .meta{font-size:1.05rem; color:var(--muted); margin-top:6px}
+
+  table{width:100%; border-collapse:collapse; margin-bottom:34px; font-size:1.05rem}
+  th,td{border-bottom:1px solid var(--line); padding:14px 10px; text-align:left}
+  th{color:var(--muted); font-weight:500; font-size:1rem}
+  tbody tr{animation:fadeUp .4s ease both}
+  .title-tag{padding:5px 14px; border-radius:999px; font-size:.95rem; white-space:nowrap}
+  .title-best{background:rgba(245,195,67,.15); color:var(--gold)}
+  .title-loser{background:rgba(255,107,107,.15); color:var(--b)}
+  .notice{
+    border:1px solid #6b5a2b; background:rgba(245,195,67,.08); color:var(--gold);
+    padding:14px 20px; border-radius:12px; font-size:1.05rem; margin-bottom:20px;
+    animation:fadeUp .4s ease both;
+  }
+  .hidden{display:none !important}
+
+  @media(max-width:960px){
+    html{font-size:17px}
+    .stage{grid-template-columns:1fr; overflow:auto}
+    aside{border-left:none; border-top:1px solid var(--line)}
+    .arena{min-height:72vh}
+    .podium{grid-template-columns:1fr}
+  }
+  @media(prefers-reduced-motion:reduce){ *{animation:none !important; transition:none !important} }
+</style>
+</head>
+<body>
+<header>
+  <h1>LT <span>Minecraft PVP</span> 大赛</h1>
+  <div class="progress" id="progress"></div>
+  <button class="btn" id="btn-sound">🔊 音效开</button>
+  <button class="btn" id="btn-toggle">查看结算</button>
+  <button class="btn danger" id="btn-reset">重置比赛</button>
+</header>
+
+<div class="stage" id="stage">
+  <main class="arena" id="arena" aria-live="polite"></main>
+  <aside>
+    <h2>战利品统计</h2>
+    <div id="loot-panel"></div>
+  </aside>
+</div>
+
+<section class="results hidden" id="results"></section>
+<div id="modal-root"></div>
+
+<script>
+"use strict";
+
+const PLAYERS = ["杨KQ", "刘YC", "李ZY", "黄JM"];
+
+const SERIES = [
+  { id:"main-low", title:"主赛 · 低版本", stage:"主赛",
+    a:"杨KQ", b:"刘YC", games:["药水","起床","战桥"], rule:"special-liu",
+    lootByWinner:{ "刘YC":[{name:"Google Account", qty:1}], "杨KQ":[{name:"巧乐兹", qty:3}] } },
+
+  { id:"main-high", title:"主赛 · 高版本", stage:"主赛",
+    a:"杨KQ", b:"刘YC", games:["单刀","重锤","水晶"], rule:"bo3",
+    lootByWinner:{ "刘YC":[{name:"任意饮料", qty:3}], "杨KQ":[{name:"雪碧", qty:3}] } },
+
+  { id:"side-1", title:"副赛 · 高版本", stage:"副赛",
+    a:"黄JM", b:"刘YC", games:["斧盾","重锤","战桥"], rule:"bo3",
+    loot:[{name:"巧乐兹", qty:1}] },
+
+  { id:"side-2", title:"副赛 · 高版本", stage:"副赛",
+    a:"杨KQ", b:"黄JM", games:["单刀","起床","重锤"], rule:"bo3",
+    loot:[{name:"拖肥", qty:1}] },
+
+  { id:"side-3", title:"副赛 · 低版本", stage:"副赛",
+    a:"李ZY", b:"刘YC", games:["烈焰弹起床","经典","起床"], rule:"bo3",
+    loot:[{name:"巧乐兹", qty:1}] },
+
+  { id:"side-4", title:"副赛 · 低版本", stage:"副赛",
+    a:"杨KQ", b:"李ZY", games:["起床","经典","经典"], rule:"bo3",
+    loot:[{name:"拖肥", qty:1}] }
+];
+
+const STORE_KEY = "lt-mc-pvp-v3";
+let state = load();
+let modalSeriesId = null;      // 当前弹窗对应的场次
+
+function load(){
+  try{
+    const raw = JSON.parse(localStorage.getItem(STORE_KEY));
+    if(raw && typeof raw.winners === "object")
+      return { winners:raw.winners, cursor:raw.cursor|0, showResults:!!raw.showResults,
+               sound: raw.sound !== false, seen: raw.seen || {} };
+  }catch(e){}
+  return { winners:{}, cursor:0, showResults:false, sound:true, seen:{} };
+}
+function save(){ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+const key = (sid, i) => sid + "#" + i;
+
+/* ---------- 音效 ---------- */
+let actx = null;
+function audio(){
+  if(!state.sound) return null;
+  if(!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+  if(actx.state === "suspended") actx.resume();
+  return actx;
+}
+function tone(freq, start, dur, type="triangle", vol=.18){
+  const ac = audio(); if(!ac) return;
+  const t = ac.currentTime + start;
+  const osc = ac.createOscillator(), g = ac.createGain();
+  osc.type = type; osc.frequency.setValueAtTime(freq, t);
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(vol, t + .015);
+  g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+  osc.connect(g).connect(ac.destination);
+  osc.start(t); osc.stop(t + dur + .02);
+}
+const SFX = {
+  pick(){ tone(660, 0, .10, "square", .14); tone(990, .06, .12); },
+  undo(){ tone(420, 0, .10, "sawtooth", .10); tone(280, .07, .12, "sawtooth", .10); },
+  nav(){ tone(520, 0, .05, "sine", .08); },
+  matchEnd(){ [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => tone(f, i*.1, .34)); },
+  fanfare(){
+    [[523.25,0],[659.25,.12],[783.99,.24],[1046.5,.36]].forEach(([f,d]) => tone(f, d, .42));
+    tone(1318.5, .52, .7, "sine", .14);
+  },
+  reset(){ [400, 320, 240].forEach((f, i) => tone(f, i*.08, .16, "sawtooth", .10)); }
+};
+
+function decide(series, aw, bw){
+  if(series.rule === "special-liu"){
+    if(bw >= 1) return series.b;
+    if(aw >= series.games.length) return series.a;
+    return null;
+  }
+  if(aw >= 2) return series.a;
+  if(bw >= 2) return series.b;
+  return null;
+}
+
+function analyze(series){
+  let aw = 0, bw = 0;
+  const games = series.games.map((name, i) => {
+    const w = state.winners[key(series.id, i)] || null;
+    if(w === series.a) aw++; else if(w === series.b) bw++;
+    return { name, index:i, winner:w };
+  });
+  return { aw, bw, winner:decide(series, aw, bw), games, complete: games.every(g => g.winner) };
+}
+
+function buildRounds(){
+  const rounds = [];
+  SERIES.forEach(s => s.games.forEach((_, i) => rounds.push({ series:s, index:i })));
+  return rounds;
+}
+function lootOf(series, winner){
+  if(!winner) return [];
+  return series.lootByWinner ? (series.lootByWinner[winner] || []) : (series.loot || []);
+}
+function computeLoot(){
+  const bag = {}; PLAYERS.forEach(p => bag[p] = []);
+  SERIES.forEach(s => {
+    const { winner } = analyze(s);
+    if(!winner) return;
+    const loser = winner === s.a ? s.b : s.a;
+    lootOf(s, winner).forEach(i => bag[winner].push({ ...i, from:loser }));
+  });
+  return bag;
+}
+function computeStats(){
+  const stats = {}; PLAYERS.forEach(p => stats[p] = { wins:0, played:0 });
+  SERIES.forEach(s => analyze(s).games.forEach(g => {
+    if(!g.winner) return;
+    stats[s.a].played++; stats[s.b].played++; stats[g.winner].wins++;
+  }));
+  Object.values(stats).forEach(v => v.rate = v.played ? v.wins / v.played : 0);
+  return stats;
+}
+function totals(){
+  const rounds = buildRounds();
+  return { playable:rounds.length,
+           resolved:rounds.filter(r => state.winners[key(r.series.id, r.index)]).length };
+}
+
+const arenaEl = document.getElementById("arena");
+const lootEl  = document.getElementById("loot-panel");
+const progEl  = document.getElementById("progress");
+const stageEl = document.getElementById("stage");
+const resEl   = document.getElementById("results");
+const modalRoot = document.getElementById("modal-root");
+const toggleBtn = document.getElementById("btn-toggle");
+const soundBtn  = document.getElementById("btn-sound");
+
+function step(dir){
+  const rounds = buildRounds();
+  const i = state.cursor + dir;
+  if(i >= 0 && i < rounds.length){ state.cursor = i; SFX.nav(); save(); render(); }
+}
+
+function pick(series, idx, player){
+  const k = key(series.id, idx);
+  if(state.winners[k] === player){ delete state.winners[k]; SFX.undo(); }
+  else { state.winners[k] = player; SFX.pick(); }
+
+  const info = analyze(series);
+
+  // 三轮全部登记完成 → 弹出该场结算（每场只自动弹一次）
+  if(info.complete && !state.seen[series.id]){
+    state.seen[series.id] = true;
+    modalSeriesId = series.id;
+    save(); render();
+    setTimeout(SFX.matchEnd, 200);
+    return;
+  }
+  if(!info.complete) delete state.seen[series.id];   // 撤销后允许再次弹出
+
+  const rounds = buildRounds();
+  const next = rounds.findIndex(r => !state.winners[key(r.series.id, r.index)]);
+  if(next !== -1) state.cursor = next;
+  save(); render();
+}
+
+/* 关闭弹窗：跳到下一场第一轮，或全部完成则进结算 */
+function closeModal(){
+  modalSeriesId = null;
+  const rounds = buildRounds();
+  const next = rounds.findIndex(r => !state.winners[key(r.series.id, r.index)]);
+  if(next === -1){ state.showResults = true; setTimeout(SFX.fanfare, 250); }
+  else state.cursor = next;
+  save(); render();
+}
+
+function renderModal(){
+  if(!modalSeriesId){ modalRoot.innerHTML = ""; return; }
+  const s = SERIES.find(x => x.id === modalSeriesId);
+  const info = analyze(s);
+  const loser = info.winner ? (info.winner === s.a ? s.b : s.a) : null;
+  const items = lootOf(s, info.winner);
+  const allDone = buildRounds().every(r => state.winners[key(r.series.id, r.index)]);
+
+  modalRoot.innerHTML = `
+    <div class="overlay" id="overlay">
+      <div class="modal" role="dialog" aria-modal="true">
+        <div class="m-stage">Match Result</div>
+        <div class="m-match">${s.title}｜${s.a} vs ${s.b}</div>
+        <div class="m-winner">${info.winner ? info.winner + " 获胜" : "本场平局"}</div>
+        <div class="m-score">比分 ${s.a} ${info.aw} : ${info.bw} ${s.b}</div>
+        <ul class="m-games">
+          ${info.games.map((g, i) =>
+            `<li><span>第 ${i+1} 轮 · ${g.name}</span><span>${g.winner || "—"}</span></li>`).join("")}
+        </ul>
+        <div class="m-loot">
+          ${items.length
+            ? `战利品：${items.map(i => `<b>${i.name} ×${i.qty}</b>`).join("、")}<br>
+               <span style="color:var(--muted);font-size:1rem">来源：${loser}</span>`
+            : `<span style="color:var(--muted)">本场无战利品</span>`}
+        </div>
+        <div class="m-actions">
+          <button class="btn primary" id="m-next">${allDone ? "查看总结算" : "进入下一场"}</button>
+          <button class="btn" id="m-stay">留在本场</button>
+        </div>
+      </div>
+    </div>`;
+
+  document.getElementById("m-next").onclick = closeModal;
+  document.getElementById("m-stay").onclick = () => { modalSeriesId = null; render(); };
+  document.getElementById("overlay").onclick = e => {
+    if(e.target.id === "overlay"){ modalSeriesId = null; render(); }
+  };
+}
+
+function renderArena(){
+  const rounds = buildRounds();
+  state.cursor = Math.min(Math.max(state.cursor, 0), rounds.length - 1);
+  const { series, index } = rounds[state.cursor];
+  const info = analyze(series);
+  const cur = info.games[index];
+
+  arenaEl.innerHTML = `
+    <div class="match-title">${series.title}</div>
+    <div class="tag">${series.a} vs ${series.b} &nbsp;|&nbsp; 第 ${index+1} / ${series.games.length} 轮</div>
+    <div class="game-name">${cur.name}</div>
+    <div class="series-score">本场比分 ${series.a} ${info.aw} : ${info.bw} ${series.b}
+      ${info.winner ? ` · 本场胜者：<b style="color:var(--ok)">${info.winner}</b>` : ""}</div>
+    <div class="picks">
+      <button class="pick side-a ${cur.winner === series.a ? "won" : ""}" data-player="${series.a}">
+        ${series.a}<small>登记为本轮胜者</small></button>
+      <button class="pick side-b ${cur.winner === series.b ? "won" : ""}" data-player="${series.b}">
+        ${series.b}<small>登记为本轮胜者</small></button>
+    </div>
+    <div class="nav">
+      <button class="btn" data-step="-1">上一轮</button>
+      <button class="btn" data-step="1">下一轮</button>
+      <button class="btn danger" id="btn-undo" ${cur.winner ? "" : "disabled"}>撤销本轮</button>
+      ${info.complete ? `<button class="btn" id="btn-recap">查看本场结算</button>` : ""}
+    </div>
+  `;
+  arenaEl.querySelectorAll(".pick").forEach(b => b.onclick = () => pick(series, index, b.dataset.player));
+  arenaEl.querySelectorAll("[data-step]").forEach(b => b.onclick = () => step(Number(b.dataset.step)));
+  const undo = document.getElementById("btn-undo");
+  if(undo) undo.onclick = () => {
+    delete state.winners[key(series.id, index)];
+    delete state.seen[series.id];
+    SFX.undo(); save(); render();
+  };
+  const recap = document.getElementById("btn-recap");
+  if(recap) recap.onclick = () => { modalSeriesId = series.id; render(); };
+}
+
+function renderLoot(){
+  const bag = computeLoot();
+  lootEl.innerHTML = PLAYERS.map((p, pi) => {
+    const items = bag[p];
+    const list = items.length
+      ? `<ul>${items.map((i, ii) =>
+          `<li style="animation-delay:${(ii*.05).toFixed(2)}s">${i.name} ×${i.qty}
+             <em>｜来源：${i.from}</em></li>`).join("")}</ul>`
+      : `<div class="empty">尚未获得</div>`;
+    return `<div class="loot-card" style="animation-delay:${(pi*.06).toFixed(2)}s"><b>${p}</b>${list}</div>`;
+  }).join("");
+}
+
+function countUp(el, target){
+  const dur = 900, t0 = performance.now();
+  (function tick(now){
+    const k = Math.min(1, (now - t0) / dur);
+    el.textContent = (target * (1 - Math.pow(1-k, 3))).toFixed(1) + "%";
+    if(k < 1) requestAnimationFrame(tick);
+  })(t0);
+}
+
+function renderResults(){
+  const stats = computeStats(), bag = computeLoot();
+  const active = PLAYERS.filter(p => stats[p].played > 0);
+  const rates = active.map(p => stats[p].rate);
+  const max = rates.length ? Math.max(...rates) : null;
+  const min = rates.length ? Math.min(...rates) : null;
+  const allEqual = max !== null && max === min;
+  const best   = active.filter(p => stats[p].rate === max);
+  const losers = allEqual ? [] : active.filter(p => stats[p].rate === min);
+
+  const t = totals();
+  let notice = "";
+  if(t.resolved < t.playable)
+    notice += `<div class="notice">尚有 ${t.playable - t.resolved} 轮未登记，当前结果为实时统计。</div>`;
+  if(allEqual && active.length > 1)
+    notice += `<div class="notice">当前所有选手胜率相同，暂不产生 Loser 称号。</div>`;
+
+  const hero = (list, cls, crest, label, award) => {
+    if(!list.length) return `<div class="hero ${cls}"><span class="crest">${crest}</span>
+      <div class="label">${label}</div><div class="who" style="font-size:2.4rem">待定</div>
+      <div class="meta">登记比赛后产生</div></div>`;
+    const s = stats[list[0]];
+    return `<div class="hero ${cls}">
+      <span class="crest">${crest}</span>
+      <div class="label">${label}</div>
+      <div class="who">${list.join(" / ")}</div>
+      <div class="award">${award}</div>
+      <div class="rate" data-rate="${(s.rate*100).toFixed(1)}">0.0%</div>
+      <div class="meta">${s.wins} 胜 / ${s.played} 项${list.length > 1 ? "（并列）" : ""}</div>
+    </div>`;
+  };
+
+  const rows = [...PLAYERS].sort((x, y) => stats[y].rate - stats[x].rate || stats[y].wins - stats[x].wins);
+  const titleOf = p => {
+    if(!stats[p].played) return "—";
+    const tags = [];
+    if(stats[p].rate === max) tags.push(`<span class="title-tag title-best">LT Best Pvper</span>`);
+    if(!allEqual && stats[p].rate === min) tags.push(`<span class="title-tag title-loser">Loser</span>`);
+    return tags.join(" ") || "—";
+  };
+
+  resEl.innerHTML = `
+    <h2>最终结算</h2>
+    ${notice}
+    <div class="podium">
+      ${hero(best,   "champion", "👑", "Champion",   "LT Best Pvper")}
+      ${hero(losers, "loser",    "💀", "Last Place", "Loser")}
+    </div>
+    <h2>各场胜者</h2>
+    <table>
+      <thead><tr><th>比赛</th><th>对阵</th><th>比分</th><th>胜者</th></tr></thead>
+      <tbody>${SERIES.map((s, i) => {
+        const a = analyze(s);
+        return `<tr style="animation-delay:${(i*.06).toFixed(2)}s">
+          <td>${s.title}</td><td>${s.a} vs ${s.b}</td><td>${a.aw} : ${a.bw}</td>
+          <td>${a.winner ? `<b>${a.winner}</b>` : "未决出"}</td></tr>`;
+      }).join("")}</tbody>
+    </table>
+    <h2>完整战绩</h2>
+    <table>
+      <thead><tr><th>选手</th><th>已完成项目</th><th>胜场</th><th>胜率</th><th>称号</th></tr></thead>
+      <tbody>${rows.map((p, i) => `
+        <tr style="animation-delay:${(i*.07).toFixed(2)}s">
+          <td><b>${p}</b></td><td>${stats[p].played}</td><td>${stats[p].wins}</td>
+          <td>${stats[p].played ? (stats[p].rate*100).toFixed(1) + "%" : "—"}</td>
+          <td>${titleOf(p)}</td></tr>`).join("")}</tbody>
+    </table>
+    <h2>战利品总表</h2>
+    <table>
+      <thead><tr><th>获得者</th><th>战利品</th><th>数量</th><th>来源</th></tr></thead>
+      <tbody>${
+        PLAYERS.flatMap(p => bag[p].map((i, n) =>
+          `<tr style="animation-delay:${(n*.05).toFixed(2)}s"><td>${p}</td><td>${i.name}</td>
+           <td>×${i.qty}</td><td>${i.from}</td></tr>`)).join("")
+        || `<tr><td colspan="4">暂无战利品记录</td></tr>`
+      }</tbody>
+    </table>
+  `;
+  resEl.querySelectorAll(".rate[data-rate]").forEach(el => countUp(el, Number(el.dataset.rate)));
+}
+
+function render(){
+  const t = totals();
+  progEl.textContent = `进度 ${t.resolved} / ${t.playable} 轮`;
+  toggleBtn.textContent = state.showResults ? "返回计分" : "查看结算";
+  soundBtn.textContent = state.sound ? "🔊 音效开" : "🔇 音效关";
+  stageEl.classList.toggle("hidden", state.showResults);
+  resEl.classList.toggle("hidden", !state.showResults);
+  if(state.showResults) renderResults(); else { renderArena(); renderLoot(); }
+  renderModal();
+}
+
+soundBtn.onclick = () => { state.sound = !state.sound; save(); if(state.sound) SFX.nav(); render(); };
+toggleBtn.onclick = () => {
+  state.showResults = !state.showResults;
+  if(state.showResults) SFX.fanfare(); else SFX.nav();
+  save(); render();
+};
+document.getElementById("btn-reset").onclick = () => {
+  if(confirm("确定清空所有比赛记录与战利品统计？此操作不可恢复。")){
+    const sound = state.sound;
+    state = { winners:{}, cursor:0, showResults:false, sound, seen:{} };
+    modalSeriesId = null; SFX.reset(); save(); render();
+  }
+};
+document.addEventListener("keydown", e => {
+  if(modalSeriesId){
+    if(e.key === "Enter") closeModal();
+    if(e.key === "Escape"){ modalSeriesId = null; render(); }
+    return;
+  }
+  if(state.showResults) return;
+  const r = buildRounds()[state.cursor];
+  if(e.key === "1") pick(r.series, r.index, r.series.a);
+  if(e.key === "2") pick(r.series, r.index, r.series.b);
+  if(e.key === "ArrowLeft") step(-1);
+  if(e.key === "ArrowRight") step(1);
+});
+
+render();
+</script>
+</body>
+</html>
